@@ -1,0 +1,837 @@
+1. Introduction
+1.1 Purpose
+
+The purpose of this document is to define the complete Software Requirements Specification (SRS) for the “Gita Guidance” web platform.
+
+The platform is an AI-powered spiritual guidance system that uses the teachings and references of the Bhagavad Gita to answer users’ life questions.
+
+The system already has an existing AI backend API:
+
+POST https://username-api/ask
+
+The website’s responsibility is:
+
+Beautiful and immersive frontend experience
+Secure authentication system
+API integration
+Latency handling
+Emotional and spiritual UX
+User history and personalization
+Modern animations and interactions
+Full-stack architecture
+Production-level scalability and security
+
+This document should provide enough detail for a development team to directly begin implementation.
+
+2. Product Vision
+
+The website should NOT feel like ChatGPT.
+
+It should feel like:
+
+A divine guide
+A calm spiritual companion
+A life advisor
+A sacred wisdom experience
+A meditative digital environment
+
+The emotional experience is extremely important.
+
+The user should feel:
+
+Peaceful
+Guided
+Emotionally connected
+Curious
+Calm while waiting for answers
+Spiritually elevated
+
+The system must transform waiting time into an experience instead of frustration.
+
+3. High Level Objectives
+Core Objectives
+Primary Goals
+Accept user questions
+Send question to AI API
+Receive answer
+Display answer beautifully
+Handle long AI response times gracefully
+Secondary Goals
+User authentication
+Save user history
+Personalized experience
+Secure infrastructure
+Mobile responsive design
+Fast frontend performance
+Modern UI animations
+Spiritual aesthetic
+Premium quality UX
+4. Suggested Technology Stack
+Frontend
+Recommended
+Next.js 15
+React
+TypeScript
+Tailwind CSS
+Framer Motion
+GSAP (optional for premium animations)
+ShadCN UI
+Lottie animations
+Why
+SSR support
+SEO optimization
+Excellent performance
+Modern animations
+Smooth UX
+Scalable architecture
+Backend
+
+Since AI API already exists:
+
+Recommended Backend Layer
+Node.js
+Express.js or Next.js API Routes
+
+Purpose:
+
+Authentication middleware
+API proxy layer
+Security layer
+Rate limiting
+Analytics
+Session management
+Database
+Recommended
+PostgreSQL
+OR
+Firebase Firestore
+Use Cases
+User profiles
+Saved conversations
+Favorite answers
+Analytics
+Feedback
+Session data
+Authentication
+Recommended
+
+Firebase Authentication
+
+Methods:
+
+Email/Password
+Continue with Google
+Hosting
+Recommended
+
+Frontend:
+
+Vercel
+
+Backend:
+
+Railway / Render / AWS
+
+Database:
+
+Supabase PostgreSQL
+OR
+Firebase
+5. User Roles
+5.1 Guest User
+
+Can:
+
+View landing page
+Ask limited questions
+Read public content
+
+Cannot:
+
+Save history
+Bookmark answers
+5.2 Registered User
+
+Can:
+
+Login/signup
+Ask unlimited questions
+Save history
+Bookmark answers
+View past guidance
+Personalize profile
+5.3 Admin
+
+Can:
+
+View analytics
+Manage users
+Moderate content
+Monitor API usage
+Manage system settings
+6. Functional Requirements
+6.1 Landing Page
+Purpose
+
+First impression must feel:
+
+Divine
+Premium
+Peaceful
+Emotional
+Spiritual
+Required Sections
+Hero Section
+
+Must include:
+
+Animated spiritual background
+Floating particles
+Calm gradients
+Sanskrit inspired typography
+CTA button
+
+Suggested headline:
+
+“Seek Guidance From Eternal Wisdom”
+
+Animated Background
+
+Possible elements:
+
+Flowing particles
+Stars
+Floating light
+Mandala effects
+Soft glow
+Krishna-inspired color palette
+Subtle moving gradients
+
+Colors:
+
+Deep blue
+Purple
+Gold
+Saffron
+White glow
+Features Section
+
+Explain:
+
+AI spiritual guidance
+Bhagavad Gita references
+Personal wisdom
+Calm experience
+Testimonials Section
+
+Animated cards.
+
+Quote Carousel
+
+Auto-rotating Gita quotes.
+
+Footer
+
+Contains:
+
+Privacy policy
+Terms
+Contact
+Social links
+6.2 Authentication System
+Login Methods
+Email Authentication
+
+Features:
+
+Signup
+Login
+Forgot password
+Email verification
+Google Authentication
+
+Use:
+
+Firebase Google provider
+Security Requirements
+
+Must implement:
+
+JWT/session management
+CSRF protection
+Secure cookies
+Firebase security rules
+HTTPS only
+Input validation
+6.3 Main Guidance Experience
+
+THIS IS THE MOST IMPORTANT PART.
+
+The UX must feel magical.
+
+Layout
+Centered Sacred Experience
+
+NOT a normal chatbot.
+
+Preferred design:
+
+Large sacred input area
+Calm environment
+Single-question focus
+Answer appears ceremonially
+User Input
+
+Features:
+
+Multi-line text area
+Auto-resize
+Beautiful glow effects
+Typing animations
+Placeholder examples
+
+Example placeholders:
+
+“How do I find peace in difficult times?”
+“Why do I feel lost?”
+“How can I overcome fear?”
+6.4 API Integration
+API Endpoint
+POST https://username-api/ask
+Request
+{
+  "question": "How do I find peace?"
+}
+Response
+{
+  "question": "How do I find peace?",
+  "answer": "..."
+}
+Integration Requirements
+VERY IMPORTANT
+
+The frontend MUST NEVER directly expose the AI API publicly.
+
+Instead:
+
+Frontend
+   ↓
+Backend Proxy Layer
+   ↓
+AI API
+
+Why:
+
+Hide real endpoint
+Prevent abuse
+Add rate limiting
+Add logging
+Add moderation
+Improve security
+6.5 Latency Handling (CRITICAL)
+
+The AI is a RAG system and takes time.
+
+This section is EXTREMELY IMPORTANT.
+
+The user must NEVER feel:
+
+“The website is frozen”
+“Nothing is happening”
+“It is slow”
+
+Instead:
+The waiting itself should become a spiritual experience.
+
+Required UX During Loading
+Stage 1: Immediate Response
+
+Within 100ms:
+
+Show transition animation
+Expand sacred response area
+Start ambient effects
+Stage 2: Spiritual Waiting Experience
+
+Show:
+
+Rotating Gita wisdom
+Breathing animations
+Calm sound option
+Floating particles
+“Seeking wisdom...” animation
+Stage 3: Progressive Emotional Feedback
+
+Animated messages:
+
+Examples:
+
+“Reflecting upon ancient wisdom...”
+“Searching divine guidance...”
+“Contemplating your question...”
+“Gathering insights from the Gita...”
+
+Rotate every few seconds.
+
+Stage 4: Reveal Experience
+
+DO NOT instantly dump the answer.
+
+Instead:
+
+Fade in
+Word-by-word reveal
+Soft glow animation
+Smooth scroll
+Sacred reveal effect
+6.6 Response Display
+Requirements
+
+Answers should appear:
+
+Elegant
+Readable
+Emotional
+Sacred
+Features
+Typography
+
+Use:
+
+Large readable font
+Proper spacing
+Calm colors
+Optional Enhancements
+Verse references
+Highlight wisdom sections
+Animated Sanskrit symbols
+Audio narration
+Actions
+
+Users can:
+
+Save answer
+Share answer
+Copy answer
+Bookmark answer
+6.7 User Dashboard
+Features
+History
+
+Show:
+
+Previous questions
+Previous answers
+Date/time
+Favorites
+
+Saved guidance.
+
+Search
+
+Search past guidance.
+
+Profile
+
+Manage:
+
+Name
+Avatar
+Preferences
+6.8 Notifications
+
+Optional:
+
+Daily spiritual quote
+Daily wisdom notification
+Reminder system
+7. Non Functional Requirements
+7.1 Performance
+Requirements
+Initial Load
+Under 3 seconds
+Animations
+60 FPS smoothness
+API Response Handling
+Non-blocking UI
+7.2 Scalability
+
+Must support:
+
+Thousands of concurrent users
+
+Use:
+
+CDN
+Caching
+Lazy loading
+7.3 Accessibility
+
+Must support:
+
+Keyboard navigation
+Screen readers
+Color contrast
+Responsive typography
+7.4 Browser Support
+Chrome
+Safari
+Firefox
+Edge
+7.5 Mobile Responsiveness
+
+Must work beautifully on:
+
+Mobile
+Tablet
+Desktop
+
+Mobile experience is extremely important.
+
+8. Security Requirements
+
+THIS SECTION IS VERY IMPORTANT.
+
+8.1 API Security
+NEVER expose:
+Secret keys
+AI API URLs
+Firebase admin credentials
+Required
+Rate Limiting
+
+Prevent spam attacks.
+
+Example:
+
+20 requests/minute/user
+Request Validation
+
+Validate:
+
+Input length
+Dangerous scripts
+Malicious payloads
+HTTPS Only
+
+Mandatory.
+
+Environment Variables
+
+All secrets stored securely.
+
+8.2 Authentication Security
+
+Use:
+
+Firebase Auth
+Secure tokens
+Session expiration
+Token refresh
+8.3 Database Security
+
+Implement:
+
+Access rules
+Row-level security
+Encrypted sensitive data
+8.4 Anti Abuse
+
+Add:
+
+Bot detection
+Captcha (optional)
+Spam filtering
+9. UI/UX Design Requirements
+9.1 Design Language
+
+The theme should feel:
+
+Divine
+Spiritual
+Futuristic
+Cinematic
+Peaceful
+Premium
+9.2 Animation Requirements
+
+Use:
+
+Smooth transitions
+Parallax
+Floating particles
+Glow effects
+Motion backgrounds
+
+Avoid:
+
+Harsh transitions
+Cheap effects
+Excessive flashing
+9.3 Visual Inspiration
+
+Inspiration style:
+
+Apple-level smoothness
+Meditation apps
+Modern cinematic websites
+Spiritual aesthetics
+9.4 Color Palette
+
+Primary:
+
+Deep blue
+Indigo
+Gold
+Saffron
+
+Accent:
+
+Cyan glow
+White light
+
+Background:
+
+Dark spiritual gradient
+9.5 Fonts
+
+Suggested:
+
+Inter
+Poppins
+Cinzel (headings)
+Sanskrit-style decorative font
+10. Suggested Website Pages
+Public Pages
+Home
+About
+Features
+Contact
+Privacy Policy
+Terms
+Auth Pages
+Login
+Signup
+Forgot Password
+Protected Pages
+Dashboard
+History
+Favorites
+Profile
+11. Backend API Architecture
+Recommended Flow
+Frontend UI
+    ↓
+Backend API Layer
+    ↓
+Authentication Middleware
+    ↓
+Rate Limiter
+    ↓
+Validation Layer
+    ↓
+AI API
+    ↓
+Frontend Response
+12. Database Schema (Suggested)
+Users Table
+Field	Type
+id	UUID
+name	String
+email	String
+profile_image	String
+created_at	Timestamp
+Conversations Table
+Field	Type
+id	UUID
+user_id	UUID
+question	Text
+answer	Text
+created_at	Timestamp
+Favorites Table
+Field	Type
+id	UUID
+user_id	UUID
+conversation_id	UUID
+13. Advanced Features (Optional)
+Phase 2 Features
+Voice Input
+
+User can speak questions.
+
+Audio Responses
+
+AI reads answers calmly.
+
+Multi-language Support
+
+Languages:
+
+English
+Hindi
+Gujarati
+Daily Wisdom Feed
+
+Personalized quotes.
+
+Mood Detection
+
+Optional emotional analysis.
+
+14. SEO Requirements
+
+Must implement:
+
+Metadata
+OpenGraph tags
+Sitemap
+Structured data
+15. Analytics
+
+Track:
+
+Daily active users
+Question count
+Average session duration
+Most asked topics
+
+Use:
+
+PostHog
+OR
+Google Analytics
+16. Error Handling
+Required
+Friendly Errors
+
+Never show technical errors.
+
+Instead show:
+
+Calm messages
+Retry options
+Beautiful fallback UI
+17. Testing Requirements
+Required Testing
+Frontend
+UI testing
+Responsiveness
+Animation smoothness
+Backend
+API testing
+Security testing
+Load testing
+Authentication
+Login flow
+Token validation
+18. Deployment Requirements
+CI/CD
+
+Use:
+
+GitHub Actions
+Production
+
+Must include:
+
+Environment separation
+Monitoring
+Error logging
+19. Suggested Folder Structure
+Frontend
+/src
+  /app
+  /components
+  /animations
+  /hooks
+  /services
+  /lib
+  /styles
+Backend
+/server
+  /routes
+  /middleware
+  /controllers
+  /services
+  /utils
+20. Final Experience Goal
+
+When users open the website:
+
+They should feel:
+
+Calm
+Curious
+Emotionally safe
+Spiritually connected
+
+When they ask a question:
+
+The waiting experience should feel intentional
+The answer should feel sacred
+The interaction should feel meaningful
+
+The platform should feel less like software and more like:
+
+“A digital spiritual sanctuary powered by AI.”
+
+21. Developer Notes (VERY IMPORTANT)
+Priority Order
+Highest Priority
+UX quality
+Latency handling
+Animation smoothness
+Emotional experience
+Security
+Avoid
+Generic chatbot UI
+Bland interfaces
+Basic loading spinners
+Abrupt transitions
+Empty waiting screens
+Must Achieve
+Premium experience
+Emotional engagement
+Beautiful motion design
+Production-level security
+Highly responsive interactions
+22. Recommended Libraries
+Frontend
+Framer Motion
+GSAP
+Lenis (smooth scroll)
+React Query / TanStack Query
+Zustand
+React Hook Form
+Zod
+Backend
+Express
+Helmet
+Rate limiter
+JWT verification
+Winston logger
+23. Suggested Future Monetization
+
+Optional:
+
+Premium guidance
+Personalized daily insights
+Voice guru experience
+Spiritual courses
+Donation system
+24. Final Deliverables Expected From Developer
+
+The developer/team must provide:
+
+Full frontend source code
+Backend source code
+Database schema
+Firebase setup
+Deployment setup
+Environment documentation
+API integration
+Security implementation
+Responsive UI
+Animation system
+Testing reports
+Production deployment guide
