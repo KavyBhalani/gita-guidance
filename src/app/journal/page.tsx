@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, query, orderBy, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2, Trash2, Share2, BookOpen, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -11,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 export default function JournalPage() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function JournalPage() {
       setChats(prev => prev.filter(chat => chat.id !== id));
     } catch (error) {
       console.error("Failed to delete chat:", error);
-      alert("Failed to delete the reflection. Please try again.");
+      alert(t.journal.deleteFailedAlert);
     }
   };
 
@@ -62,10 +64,10 @@ export default function JournalPage() {
     const textToShare = `My question: ${chat.question}\n\nDivine Guidance:\n${chat.answer}\n\n- via Gita Guidance`;
     try {
       await navigator.clipboard.writeText(textToShare);
-      alert("Guidance copied to clipboard!");
+      alert(t.journal.copiedAlert);
     } catch (err) {
       console.error("Failed to copy text: ", err);
-      alert("Failed to copy text.");
+      alert(t.journal.copyFailedAlert);
     }
   };
 
@@ -83,22 +85,22 @@ export default function JournalPage() {
         <div>
           <Link href="/ask" className="inline-flex items-center gap-2 text-primary hover:text-primary-hover mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            Back to Guidance
+            {t.journal.backToGuidance}
           </Link>
           <h1 className="font-serif text-4xl font-bold text-foreground flex items-center gap-3">
             <BookOpen className="w-8 h-8 text-primary" />
-            Your Spiritual Journal
+            {t.journal.title}
           </h1>
-          <p className="text-foreground/70 mt-2">A record of your spiritual inquiries and the wisdom received.</p>
+          <p className="text-foreground/70 mt-2">{t.journal.subtitle}</p>
         </div>
       </div>
 
       {chats.length === 0 ? (
         <div className="glass p-12 rounded-3xl text-center">
-          <p className="text-foreground/80 text-lg mb-6">Your journal is currently empty.</p>
+          <p className="text-foreground/80 text-lg mb-6">{t.journal.emptyText}</p>
           <Link href="/ask">
             <button className="px-8 py-3 bg-primary text-background font-semibold rounded-full hover:bg-primary-hover transition-colors shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-              Seek Guidance
+              {t.journal.seekGuidance}
             </button>
           </Link>
         </div>
@@ -118,7 +120,7 @@ export default function JournalPage() {
 
                 <div className="mb-4">
                   <p className="text-sm text-foreground/60 uppercase tracking-wider font-semibold mb-2 flex justify-between items-center">
-                    <span>{chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : 'Just now'}</span>
+                    <span>{chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : t.journal.justNow}</span>
                   </p>
                   <h3 className="font-serif text-2xl text-foreground font-medium">&quot;{chat.question}&quot;</h3>
                 </div>
@@ -128,7 +130,7 @@ export default function JournalPage() {
                     <p className="text-foreground/80 leading-relaxed font-serif text-lg whitespace-pre-wrap line-clamp-3">
                       {chat.answer}
                     </p>
-                    <p className="text-primary text-sm mt-3 font-medium group-hover/link:underline">Read full guidance →</p>
+                    <p className="text-primary text-sm mt-3 font-medium group-hover/link:underline">{t.journal.readFullGuidance}</p>
                   </div>
                 </Link>
 
@@ -138,14 +140,14 @@ export default function JournalPage() {
                     className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/80 hover:text-foreground bg-white/5 hover:bg-white/10 rounded-full transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
-                    Share
+                    {t.journal.share}
                   </button>
                   <button
                     onClick={() => handleDelete(chat.id)}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-white hover:bg-red-500/20 bg-white/5 rounded-full transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
-                    Delete
+                    {t.journal.delete}
                   </button>
                 </div>
               </motion.div>

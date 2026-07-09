@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LoginPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ export default function LoginPage() {
       router.push("/ask");
     } catch (err: unknown) {
       console.error(err);
-      setError("Invalid email or password. Please try again.");
+      setError(t.auth.loginError);
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,7 @@ export default function LoginPage() {
       router.push("/ask");
     } catch (err: unknown) {
       console.error(err);
-      setError("Failed to sign in with Google.");
+      setError(t.auth.googleLoginError);
       setLoading(false);
     }
   };
@@ -58,8 +60,8 @@ export default function LoginPage() {
         className="glass w-full max-w-md p-8 rounded-3xl border border-white/5 shadow-2xl relative z-10"
       >
         <div className="text-center mb-8">
-          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-foreground/60 text-sm">Continue your spiritual journey.</p>
+          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">{t.auth.welcomeBack}</h1>
+          <p className="text-foreground/60 text-sm">{t.auth.continueJourney}</p>
         </div>
 
         {error && (
@@ -84,7 +86,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="Email address"
+              placeholder={t.auth.emailPlaceholder}
             />
           </div>
 
@@ -98,7 +100,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="Password"
+              placeholder={t.auth.passwordPlaceholder}
             />
           </div>
 
@@ -107,7 +109,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-background bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.3)]"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t.auth.signIn}
           </button>
         </form>
 
@@ -116,7 +118,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-white/10"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-transparent text-foreground/50">Or continue with</span>
+            <span className="px-2 bg-transparent text-foreground/50">{t.auth.orContinueWith}</span>
           </div>
         </div>
 
@@ -132,13 +134,13 @@ export default function LoginPage() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
           </svg>
-          Google
+          {t.auth.google}
         </button>
 
         <p className="mt-8 text-center text-sm text-foreground/60">
-          Don&apos;t have an account?{" "}
+          {t.auth.noAccount}{" "}
           <Link href="/signup" className="text-primary hover:text-primary-hover font-medium transition-colors">
-            Sign up
+            {t.auth.signUpLink}
           </Link>
         </p>
       </motion.div>

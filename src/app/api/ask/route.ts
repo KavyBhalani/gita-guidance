@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { question } = body;
+    const { question, language, languageCode } = body;
 
     if (!question) {
       return NextResponse.json({ error: "Question is required" }, { status: 400 });
@@ -16,14 +16,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Backend configuration error" }, { status: 500 });
     }
 
-    // Proxy the request to the Hugging Face AI endpoint
+    // Proxy the request to the Hugging Face AI endpoint with language parameters
     const response = await fetch(aiEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      // Passing the question directly; adjust payload structure if the backend expects a different format
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ 
+        question, 
+        language: language || "English",
+        languageCode: languageCode || "en"
+      }),
     });
 
     if (!response.ok) {

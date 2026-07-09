@@ -1,8 +1,14 @@
+"use client";
+
 import Hero from "@/components/Hero";
 import { BookOpen, Sparkles, Feather, Shield } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
+  const currentYear = new Date().getFullYear();
+
   return (
     <main className="flex-1 flex flex-col">
       <Hero />
@@ -12,25 +18,25 @@ export default function Home() {
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-6 text-gray-100">Divine Features</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">Discover how our platform brings ancient wisdom to your modern life.</p>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-6 text-gray-100">{t.home.featuresTitle}</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t.home.featuresSubtitle}</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { 
-                title: "Personalized Guidance", 
-                desc: "Receive tailored wisdom based on your unique life situations, emotionally attuned to your struggles.",
+                title: t.home.feature1Title, 
+                desc: t.home.feature1Desc,
                 icon: <Sparkles className="w-8 h-8 text-primary mb-4" />
               },
               { 
-                title: "Ancient Authenticity", 
-                desc: "Rooted deeply in the authentic translations and verses of the Bhagavad Gita.",
+                title: t.home.feature2Title, 
+                desc: t.home.feature2Desc,
                 icon: <BookOpen className="w-8 h-8 text-primary mb-4" />
               },
               { 
-                title: "Meditative Experience", 
-                desc: "A calm, distraction-free environment designed for reflection, peace, and spiritual growth.",
+                title: t.home.feature3Title, 
+                desc: t.home.feature3Desc,
                 icon: <Feather className="w-8 h-8 text-primary mb-4" />
               }
             ].map((feature, i) => (
@@ -49,20 +55,20 @@ export default function Home() {
       <section className="py-24 px-4 bg-black/40 relative z-10 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-6 text-gray-100">Voices of Clarity</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">See how others have found peace through divine guidance.</p>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold mb-6 text-gray-100">{t.home.testimonialsTitle}</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t.home.testimonialsSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { quote: "I was overwhelmed with anxiety about my career. The guidance I received felt like a warm, divine hug.", author: "Priya S." },
-              { quote: "It doesn't feel like talking to a bot. It feels like consulting an ancient sage who truly understands human nature.", author: "David M." },
-              { quote: "The way the answers are revealed, word by word, makes me slow down and actually absorb the wisdom.", author: "Arjun K." }
+              { quote: t.home.testimonial1Quote, author: t.home.testimonial1Author },
+              { quote: t.home.testimonial2Quote, author: t.home.testimonial2Author },
+              { quote: t.home.testimonial3Quote, author: t.home.testimonial3Author }
             ].map((testimonial, i) => (
               <div key={i} className="glass p-8 rounded-3xl border border-white/5 text-left">
                 <div className="mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-primary text-lg">★</span>
+                  {[...Array(5)].map((_, idx) => (
+                    <span key={idx} className="text-primary text-lg">★</span>
                   ))}
                 </div>
                 <p className="text-gray-300 mb-6 italic leading-relaxed">&quot;{testimonial.quote}&quot;</p>
@@ -82,37 +88,37 @@ export default function Home() {
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-primary" />
                 </div>
-                <span className="font-serif font-bold text-xl text-gray-100">Gita Guidance</span>
+                <span className="font-serif font-bold text-xl text-gray-100">{t.navbar.title}</span>
               </Link>
               <p className="text-gray-400 max-w-sm leading-relaxed mb-6">
-                A digital spiritual sanctuary powered by AI. Find clarity, overcome doubts, and connect with eternal wisdom.
+                {t.home.footerDesc}
               </p>
             </div>
             
             <div>
-              <h4 className="text-gray-100 font-semibold mb-6">Platform</h4>
+              <h4 className="text-gray-100 font-semibold mb-6">{t.home.platform}</h4>
               <ul className="space-y-4">
-                <li><Link href="/ask" className="text-gray-400 hover:text-primary transition-colors">Seek Guidance</Link></li>
-                <li><Link href="/journal" className="text-gray-400 hover:text-primary transition-colors">Your Journal</Link></li>
-                <li><Link href="/about" className="text-gray-400 hover:text-primary transition-colors">About Us</Link></li>
+                <li><Link href="/ask" className="text-gray-400 hover:text-primary transition-colors">{t.home.seekGuidance}</Link></li>
+                <li><Link href="/journal" className="text-gray-400 hover:text-primary transition-colors">{t.home.yourJournal}</Link></li>
+                <li><Link href="/about" className="text-gray-400 hover:text-primary transition-colors">{t.home.aboutUs}</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-gray-100 font-semibold mb-6">Legal</h4>
+              <h4 className="text-gray-100 font-semibold mb-6">{t.home.legal}</h4>
               <ul className="space-y-4">
-                <li><Link href="#" className="text-gray-400 hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="text-gray-400 hover:text-primary transition-colors">Terms of Service</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-primary transition-colors">{t.home.privacyPolicy}</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-primary transition-colors">{t.home.termsOfService}</Link></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between">
             <p className="text-gray-500 text-sm text-center md:text-left">
-              © {new Date().getFullYear()} Gita Guidance. All rights reserved.
+              {t.home.rightsReserved.replace("{year}", currentYear.toString())}
             </p>
             <div className="flex items-center gap-2 mt-4 md:mt-0 text-gray-500 text-sm">
-              <Shield className="w-4 h-4" /> Secured by Firebase
+              <Shield className="w-4 h-4" /> {t.home.securedByFirebase}
             </div>
           </div>
         </div>

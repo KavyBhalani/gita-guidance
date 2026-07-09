@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, Lock, User, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SignupPage() {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,11 +38,11 @@ export default function SignupPage() {
       console.error(err);
       const firebaseError = err as { code?: string };
       if (firebaseError.code === 'auth/email-already-in-use') {
-        setError("An account with this email already exists.");
+        setError(t.auth.emailExistsError);
       } else if (firebaseError.code === 'auth/weak-password') {
-        setError("Password should be at least 6 characters.");
+        setError(t.auth.weakPasswordError);
       } else {
-        setError("Failed to create an account. Please try again.");
+        setError(t.auth.signupError);
       }
     } finally {
       setLoading(false);
@@ -57,7 +59,7 @@ export default function SignupPage() {
       router.push("/ask");
     } catch (err: unknown) {
       console.error(err);
-      setError("Failed to sign up with Google.");
+      setError(t.auth.googleSignupError);
       setLoading(false);
     }
   };
@@ -74,8 +76,8 @@ export default function SignupPage() {
         className="glass w-full max-w-md p-8 rounded-3xl border border-white/5 shadow-2xl relative z-10"
       >
         <div className="text-center mb-8">
-          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Begin Your Journey</h1>
-          <p className="text-foreground/60 text-sm">Create an account to save your divine guidance.</p>
+          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">{t.auth.beginJourney}</h1>
+          <p className="text-foreground/60 text-sm">{t.auth.createAccountSubtitle}</p>
         </div>
 
         {error && (
@@ -100,7 +102,7 @@ export default function SignupPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="Your Name"
+              placeholder={t.auth.namePlaceholder}
             />
           </div>
 
@@ -114,7 +116,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="Email address"
+              placeholder={t.auth.emailPlaceholder}
             />
           </div>
 
@@ -128,7 +130,7 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="Password (min 6 characters)"
+              placeholder={t.auth.passwordMinPlaceholder}
             />
           </div>
 
@@ -137,7 +139,7 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-background bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.3)]"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create Account"}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t.auth.createAccount}
           </button>
         </form>
 
@@ -146,7 +148,7 @@ export default function SignupPage() {
             <div className="w-full border-t border-white/10"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-transparent text-foreground/50">Or sign up with</span>
+            <span className="px-2 bg-transparent text-foreground/50">{t.auth.orSignUpWith}</span>
           </div>
         </div>
 
@@ -162,13 +164,13 @@ export default function SignupPage() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
           </svg>
-          Google
+          {t.auth.google}
         </button>
 
         <p className="mt-8 text-center text-sm text-foreground/60">
-          Already have an account?{" "}
+          {t.auth.hasAccount}{" "}
           <Link href="/login" className="text-primary hover:text-primary-hover font-medium transition-colors">
-            Sign in
+            {t.auth.signInLink}
           </Link>
         </p>
       </motion.div>

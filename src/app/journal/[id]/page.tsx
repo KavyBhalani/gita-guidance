@@ -4,6 +4,7 @@ import { useEffect, useState, use } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2, ArrowLeft, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import { motion } from "framer-motion";
 export default function SingleChatPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [chat, setChat] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -50,10 +52,10 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
     const textToShare = `My question: ${chat.question}\n\nDivine Guidance:\n${chat.answer}\n\n- via Gita Guidance`;
     try {
       await navigator.clipboard.writeText(textToShare);
-      alert("Guidance copied to clipboard!");
+      alert(t.journal.copiedAlert);
     } catch (err) {
       console.error("Failed to copy text: ", err);
-      alert("Failed to copy text.");
+      alert(t.journal.copyFailedAlert);
     }
   };
 
@@ -72,7 +74,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
       <div className="mb-8">
         <Link href="/journal" className="inline-flex items-center gap-2 text-primary hover:text-primary-hover mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          Back to Journal
+          {t.journal.backToJournal}
         </Link>
       </div>
 
@@ -85,7 +87,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
 
         <div className="mb-8 text-center">
           <p className="text-sm text-foreground/60 uppercase tracking-widest font-semibold mb-4">
-            {chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : 'Reflection'}
+            {chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : t.journal.reflection}
           </p>
           <h1 className="font-serif text-3xl md:text-4xl text-primary font-bold leading-tight">
             &quot;{chat.question}&quot;
@@ -104,7 +106,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
             className="flex items-center gap-2 px-8 py-3 text-background font-semibold bg-primary hover:bg-primary-hover hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] rounded-full transition-all"
           >
             <Share2 className="w-5 h-5" />
-            Share this Wisdom
+            {t.journal.shareWisdom}
           </button>
         </div>
       </motion.div>

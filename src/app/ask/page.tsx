@@ -4,17 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Sparkles, RefreshCcw, History } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import ChatSidebar from "@/components/ChatSidebar";
-
-const WISDOM_QUOTES = [
-  "You have the right to perform your prescribed duty, but you are not entitled to the fruits of action.",
-  "When meditation is mastered, the mind is unwavering like the flame of a lamp in a windless place.",
-  "There is neither this world nor the world beyond nor happiness for the one who doubts.",
-  "A person can rise through the efforts of their own mind; for the mind is the friend of the soul.",
-  "Seek refuge in the attitude of detachment and you will amass the wealth of spiritual awareness."
-];
 
 export default function AskPage() {
   const [question, setQuestion] = useState("");
@@ -27,6 +20,7 @@ export default function AskPage() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useAuth();
+  const { t, languageInfo } = useLanguage();
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(e.target.value);
@@ -41,11 +35,11 @@ export default function AskPage() {
     let interval: NodeJS.Timeout;
     if (state === "waiting") {
       interval = setInterval(() => {
-        setQuoteIndex((prev) => (prev + 1) % WISDOM_QUOTES.length);
+        setQuoteIndex((prev) => (prev + 1) % t.ask.quotes.length);
       }, 4000);
     }
     return () => clearInterval(interval);
-  }, [state]);
+  }, [state, t.ask.quotes.length]);
 
   // Word-by-word reveal effect
   useEffect(() => {
@@ -77,7 +71,11 @@ export default function AskPage() {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ 
+          question,
+          language: languageInfo.name,
+          languageCode: languageInfo.id
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to fetch guidance");
@@ -85,7 +83,6 @@ export default function AskPage() {
       const data = await res.json();
 
       // Parse the backend response. Assuming data.answer or data.response or just text.
-      // If the backend returns a simple string, use it. If an object, extract the main text.
       const answerText = data.answer || data.response || data.message || JSON.stringify(data);
 
       setResponse(answerText);
@@ -98,6 +95,7 @@ export default function AskPage() {
           await addDoc(collection(db, "users", user.uid, "chats"), {
             question,
             answer: answerText,
+            language: languageInfo.name,
             timestamp: serverTimestamp()
           });
           setRefreshTrigger(prev => prev + 1);
@@ -107,7 +105,7 @@ export default function AskPage() {
       }
     } catch (error) {
       console.error(error);
-      setResponse("The cosmic connection was interrupted. Please try asking again.");
+      setResponse(t.ask.errorMessage);
       setState("revealing");
     }
   };
@@ -128,7 +126,7 @@ export default function AskPage() {
           className="flex items-center gap-2 px-4 py-2 glass rounded-full text-primary hover:bg-white/10 transition-colors shadow-lg border border-white/10"
         >
           <History className="w-4 h-4" />
-          <span className="text-sm font-medium">History</span>
+          <span className="text-sm font-medium">{t.ask.history}</span>
         </button>
       </div>
 
@@ -161,10 +159,10 @@ export default function AskPage() {
               >
                 <div className="text-center mb-12">
                   <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-primary">
-                    What troubles your mind?
+                    {t.ask.title}
                   </h1>
                   <p className="text-foreground/60 text-lg">
-                    Pour your thoughts into the sacred space below.
+                    {t.ask.subtitle}
                   </p>
                 </div>
 
@@ -173,7 +171,7 @@ export default function AskPage() {
                     ref={textareaRef}
                     value={question}
                     onChange={handleInput}
-                    placeholder="e.g., How do I find peace when everything feels overwhelming?"
+                    placeholder={t.ask.placeholder}
                     className="w-full min-h-[150px] max-h-[400px] p-8 rounded-3xl text-xl leading-relaxed text-foreground/90 placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 resize-none glass shadow-2xl transition-all"
                     autoFocus
                   />
@@ -220,7 +218,7 @@ export default function AskPage() {
                     transition={{ duration: 0.8 }}
                     className="font-serif text-2xl md:text-3xl text-foreground/80 max-w-2xl leading-relaxed italic"
                   >
-                    &quot;{WISDOM_QUOTES[quoteIndex]}&quot;
+                    &quot;{t.ask.quotes[quoteIndex || 0]}&quot;
                   </motion.p>
                 </AnimatePresence>
               </motion.div>
@@ -236,7 +234,7 @@ export default function AskPage() {
                 className="w-full"
               >
                 <div className="mb-12 text-center">
-                  <p className="text-foreground/50 text-sm mb-4 uppercase tracking-widest font-semibold">Your Question</p>
+                  <p className="text-foreground/50 text-sm mb-4 uppercase tracking-widest font-semibold">{t.ask.yourQuestion}</p>
                   <h2 className="font-serif text-2xl md:text-3xl text-primary opacity-90">&quot;{question}&quot;</h2>
                 </div>
 
@@ -277,7 +275,7 @@ export default function AskPage() {
                       className="flex items-center justify-center gap-3 px-8 py-4 glass rounded-full hover:bg-white/10 transition-colors text-foreground/80 font-medium group"
                     >
                       <RefreshCcw className="w-5 h-5 group-hover:-rotate-180 transition-transform duration-700" />
-                      Seek Further Guidance
+                      {t.ask.seekFurther}
                     </button>
                   </motion.div>
                 )}
