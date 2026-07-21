@@ -5,11 +5,10 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, ArrowLeft, Share2, Star, Volume2, Image as ImageIcon, Save, Pause, Play, Square } from "lucide-react";
+import { Loader2, ArrowLeft, Share2, Star, Volume2, Save, Pause, Play, Square } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import html2canvas from "html2canvas";
 
 export default function SingleChatPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -23,7 +22,6 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
   const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
   const [charIndex, setCharIndex] = useState<number>(-1);
   const router = useRouter();
-  const quoteCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
@@ -197,27 +195,6 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
     );
   };
 
-  const handleShareQuoteCard = async () => {
-    if (!quoteCardRef.current) return;
-    try {
-      const canvas = await html2canvas(quoteCardRef.current, {
-        scale: 2,
-        backgroundColor: "#0A0A0A",
-        logging: false,
-        useCORS: true
-      } as any);
-      
-      const image = canvas.toDataURL("image/png");
-      
-      const link = document.createElement("a");
-      link.href = image;
-      link.download = `Gita-Guidance-Quote-${Date.now()}.png`;
-      link.click();
-    } catch (err) {
-      console.error("Error generating quote card", err);
-    }
-  };
-
   const handleShareText = async () => {
     if (!chat) return;
     const textToShare = `My question: ${chat.question}\n\nDivine Guidance:\n${chat.answer}\n\n- via Gita Guidance`;
@@ -300,13 +277,6 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
             <Share2 className="w-5 h-5" />
             {t.journal.share}
           </button>
-          <button
-            onClick={handleShareQuoteCard}
-            className="flex items-center justify-center gap-2 px-6 py-3 text-background font-semibold bg-primary hover:bg-primary-hover hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] rounded-full transition-all"
-          >
-            <ImageIcon className="w-5 h-5" />
-            {t.journal.shareQuoteCard}
-          </button>
         </div>
       </motion.div>
 
@@ -336,32 +306,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
         </div>
       </motion.div>
 
-      {/* Hidden Quote Card for HTML2Canvas */}
-      <div className="fixed top-0 left-0 w-[1080px] h-[1080px] pointer-events-none opacity-0 -z-50">
-        <div 
-          ref={quoteCardRef}
-          className="w-[1080px] h-[1080px] flex flex-col justify-center items-center p-20 text-center relative overflow-hidden"
-          style={{ 
-            background: 'radial-gradient(circle at center, #1a1525 0%, #0a0a0a 100%)',
-          }}
-        >
-          {/* Cosmic Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-          
-          <p className="font-serif text-amber-500/80 text-2xl uppercase tracking-[0.3em] font-semibold mb-12 relative z-10">
-            &quot;{chat.question}&quot;
-          </p>
-          
-          <h1 className="font-serif text-5xl leading-[1.6] text-white/90 font-medium relative z-10 max-w-4xl">
-            {chat.answer}
-          </h1>
-          
-          <div className="absolute bottom-16 left-0 w-full flex flex-col items-center z-10">
-            <div className="w-12 h-[1px] bg-amber-500/50 mb-6"></div>
-            <p className="font-sans text-white/50 text-xl font-medium tracking-wide">Bhagavad Gita Guide • Divine Wisdom</p>
-          </div>
-        </div>
-      </div>
+
 
     </main>
   );
