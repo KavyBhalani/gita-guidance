@@ -5,7 +5,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, ArrowLeft, Share2, Star, Volume2, Image as ImageIcon, Save } from "lucide-react";
+import { Loader2, ArrowLeft, Share2, Star, Volume2, Image as ImageIcon, Save, Pause, Play, Square } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -20,8 +20,18 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
+  const [charIndex, setCharIndex] = useState<number>(-1);
   const router = useRouter();
   const quoteCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -122,10 +132,69 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
 
   const handleListen = () => {
     if (!window.speechSynthesis || !chat) return;
+
+    if (speechState === "playing") {
+      window.speechSynthesis.pause();
+      setSpeechState("paused");
+      return;
+    }
+
+    if (speechState === "paused") {
+      window.speechSynthesis.resume();
+      setSpeechState("playing");
+      return;
+    }
+
     window.speechSynthesis.cancel();
+    setCharIndex(0);
     const utterance = new SpeechSynthesisUtterance(chat.answer);
     utterance.lang = languageInfo.id === 'en' ? 'en-US' : languageInfo.id;
+    
+    utterance.onboundary = (e) => {
+      if (e.name === 'word') {
+        setCharIndex(e.charIndex);
+      }
+    };
+    
+    utterance.onend = () => {
+      setSpeechState("idle");
+      setCharIndex(-1);
+    };
+
+    utterance.onerror = () => {
+      setSpeechState("idle");
+      setCharIndex(-1);
+    };
+
     window.speechSynthesis.speak(utterance);
+    setSpeechState("playing");
+  };
+
+  const handleStopListen = () => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setSpeechState("idle");
+    setCharIndex(-1);
+  };
+
+  const renderHighlightedText = (text: string, currentIndex: number) => {
+    if (currentIndex < 0) return text;
+    
+    const match = text.slice(currentIndex).match(/[\s\n]/);
+    const endIndex = match ? currentIndex + match.index! : text.length;
+    
+    const before = text.slice(0, currentIndex);
+    const word = text.slice(currentIndex, endIndex);
+    const after = text.slice(endIndex);
+    
+    return (
+      <>
+        {before}
+        <span className="bg-primary/40 text-primary font-bold rounded px-1 -mx-1 transition-colors duration-150 shadow-[0_0_10px_rgba(245,158,11,0.3)]">{word}</span>
+        {after}
+      </>
+    );
   };
 
   const handleShareQuoteCard = async () => {
@@ -201,16 +270,25 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
 
         <div className="bg-black/20 p-6 md:p-8 rounded-2xl border border-white/5 mb-8 relative">
           <div className="absolute top-4 right-4 z-10 flex gap-2">
+            {speechState !== "idle" && (
+              <button
+                onClick={handleStopListen}
+                className="p-2 rounded-full bg-white/5 text-foreground/60 hover:bg-white/10 hover:text-red-400 transition-colors"
+                title="Stop"
+              >
+                <Square className="w-5 h-5" />
+              </button>
+            )}
             <button
               onClick={handleListen}
-              className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-              title={t.ask.listen}
+              className={\`p-2 rounded-full transition-colors \${speechState === 'playing' ? 'bg-primary/20 text-primary animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20'}\`}
+              title={speechState === "playing" ? "Pause" : t.ask.listen}
             >
-              <Volume2 className="w-5 h-5" />
+              {speechState === "playing" ? <Pause className="w-5 h-5" /> : (speechState === "paused" ? <Play className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />)}
             </button>
           </div>
           <p className="text-foreground/90 leading-loose font-serif text-xl whitespace-pre-wrap pt-8 md:pt-4">
-            {chat.answer}
+            {renderHighlightedText(chat.answer, charIndex)}
           </p>
         </div>
 
@@ -259,7 +337,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
       </motion.div>
 
       {/* Hidden Quote Card for HTML2Canvas */}
-      <div className="absolute top-[-9999px] left-[-9999px]">
+      <div className="fixed top-0 left-0 w-[1080px] h-[1080px] pointer-events-none opacity-0 -z-50">
         <div 
           ref={quoteCardRef}
           className="w-[1080px] h-[1080px] flex flex-col justify-center items-center p-20 text-center relative overflow-hidden"

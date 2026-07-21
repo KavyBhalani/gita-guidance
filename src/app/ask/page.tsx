@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, RefreshCcw, History, Volume2 } from "lucide-react";
+import { Send, Sparkles, RefreshCcw, History, Volume2, Square, Play, Pause } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/firebase";
@@ -18,6 +18,8 @@ export default function AskPage() {
   const [displayedWords, setDisplayedWords] = useState<string[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
+  const [charIndex, setCharIndex] = useState<number>(-1);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useAuth();
@@ -48,6 +50,11 @@ export default function AskPage() {
     if (user && !user.emailVerified) {
       router.push("/verify-email");
     }
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, [user, router]);
 
   // Word-by-word reveal effect
@@ -131,10 +138,69 @@ export default function AskPage() {
 
   const handleListen = () => {
     if (!window.speechSynthesis) return;
+
+    if (speechState === "playing") {
+      window.speechSynthesis.pause();
+      setSpeechState("paused");
+      return;
+    }
+
+    if (speechState === "paused") {
+      window.speechSynthesis.resume();
+      setSpeechState("playing");
+      return;
+    }
+
     window.speechSynthesis.cancel();
+    setCharIndex(0);
     const utterance = new SpeechSynthesisUtterance(response);
     utterance.lang = languageInfo.id === 'en' ? 'en-US' : languageInfo.id;
+    
+    utterance.onboundary = (e) => {
+      if (e.name === 'word') {
+        setCharIndex(e.charIndex);
+      }
+    };
+    
+    utterance.onend = () => {
+      setSpeechState("idle");
+      setCharIndex(-1);
+    };
+
+    utterance.onerror = () => {
+      setSpeechState("idle");
+      setCharIndex(-1);
+    };
+
     window.speechSynthesis.speak(utterance);
+    setSpeechState("playing");
+  };
+
+  const handleStopListen = () => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setSpeechState("idle");
+    setCharIndex(-1);
+  };
+
+  const renderHighlightedText = (text: string, currentIndex: number) => {
+    if (currentIndex < 0) return text;
+    
+    const match = text.slice(currentIndex).match(/[\s\n]/);
+    const endIndex = match ? currentIndex + match.index! : text.length;
+    
+    const before = text.slice(0, currentIndex);
+    const word = text.slice(currentIndex, endIndex);
+    const after = text.slice(endIndex);
+    
+    return (
+      <>
+        {before}
+        <span className="bg-primary/40 text-primary font-bold rounded px-1 -mx-1 transition-colors duration-150 shadow-[0_0_10px_rgba(245,158,11,0.3)]">{word}</span>
+        {after}
+      </>
+    );
   };
 
   return (
@@ -286,27 +352,42 @@ export default function AskPage() {
                 <div className="glass p-8 md:p-12 rounded-3xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
-                  <div className="absolute top-4 right-4 z-10">
+                  <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    {speechState !== "idle" && (
+                      <button
+                        onClick={handleStopListen}
+                        className="p-2 rounded-full bg-white/5 text-foreground/60 hover:bg-white/10 hover:text-red-400 transition-colors"
+                        title="Stop"
+                      >
+                        <Square className="w-4 h-4" />
+                      </button>
+                    )}
                     <button
                       onClick={handleListen}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium border border-primary/20"
+                      className={\`flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-sm font-medium border \${speechState === 'playing' ? 'bg-primary/20 text-primary border-primary/40 animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'}\`}
+                      title={speechState === "playing" ? "Pause" : t.ask.listen}
                     >
-                      <Volume2 className="w-4 h-4" /> {t.ask.listen}
+                      {speechState === "playing" ? <Pause className="w-4 h-4" /> : (speechState === "paused" ? <Play className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />)}
+                      {speechState === "playing" ? "Pause" : (speechState === "paused" ? "Resume" : t.ask.listen)}
                     </button>
                   </div>
 
                   <p className="font-serif text-xl md:text-2xl leading-loose text-foreground min-h-[200px] mt-4">
-                    {displayedWords.map((word, i) => (
-                      <motion.span
-                        key={i}
-                        initial={{ opacity: 0, filter: "blur(8px)" }}
-                        animate={{ opacity: 1, filter: "blur(0px)" }}
-                        transition={{ duration: 0.4 }}
-                        className="inline-block mr-[0.3em] mb-2"
-                      >
-                        {word}
-                      </motion.span>
-                    ))}
+                    {state === "revealing" ? (
+                      displayedWords.map((word, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, filter: "blur(8px)" }}
+                          animate={{ opacity: 1, filter: "blur(0px)" }}
+                          transition={{ duration: 0.4 }}
+                          className="inline-block mr-[0.3em] mb-2"
+                        >
+                          {word}
+                        </motion.span>
+                      ))
+                    ) : (
+                      renderHighlightedText(response, charIndex)
+                    )}
                     {state === "revealing" && (
                       <motion.span
                         animate={{ opacity: [0, 1, 0] }}
