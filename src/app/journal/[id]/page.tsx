@@ -281,7 +281,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
             )}
             <button
               onClick={handleListen}
-              className={\`p-2 rounded-full transition-colors \${speechState === 'playing' ? 'bg-primary/20 text-primary animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20'}\`}
+              className={`p-2 rounded-full transition-colors ${speechState === 'playing' ? 'bg-primary/20 text-primary animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
               title={speechState === "playing" ? "Pause" : t.ask.listen}
             >
               {speechState === "playing" ? <Pause className="w-5 h-5" /> : (speechState === "paused" ? <Play className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />)}

@@ -364,7 +364,7 @@ export default function AskPage() {
                     )}
                     <button
                       onClick={handleListen}
-                      className={\`flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-sm font-medium border \${speechState === 'playing' ? 'bg-primary/20 text-primary border-primary/40 animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'}\`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-sm font-medium border ${speechState === 'playing' ? 'bg-primary/20 text-primary border-primary/40 animate-pulse' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'}`}
                       title={speechState === "playing" ? "Pause" : t.ask.listen}
                     >
                       {speechState === "playing" ? <Pause className="w-4 h-4" /> : (speechState === "paused" ? <Play className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />)}
