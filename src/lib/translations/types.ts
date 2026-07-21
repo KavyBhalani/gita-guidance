@@ -79,6 +79,14 @@ export interface TranslationDictionary {
     yourQuestion: string;
     errorMessage: string;
     seekFurther: string;
+    listen: string;
+    chips: {
+      anxiety: string;
+      grief: string;
+      dilemma: string;
+      anger: string;
+      purpose: string;
+    };
   };
   sidebar: {
     recentGuidance: string;
@@ -118,6 +126,13 @@ export interface TranslationDictionary {
     backToJournal: string;
     reflection: string;
     shareWisdom: string;
+    reflectionNotePlaceholder: string;
+    saveNote: string;
+    favorites: string;
+    all: string;
+    noteSaved: string;
+    shareQuoteCard: string;
+    offlineMode: string;
   };
   auth: {
     welcomeBack: string;
@@ -143,5 +158,19 @@ export interface TranslationDictionary {
     weakPasswordError: string;
     signupError: string;
     googleSignupError: string;
+    verifyEmail: string;
+    verifyEmailSubtitle: string;
+    resendLink: string;
+    iHaveVerified: string;
+    useAnotherEmail: string;
+    emailNotVerified: string;
+    forgotPassword: string;
+    resetPassword: string;
+    resetPasswordSubtitle: string;
+    resetPasswordSent: string;
+    resetPasswordError: string;
+    checkEmailToVerify: string;
+    openEmailApp: string;
+    pleaseWait: string;
   };
 }

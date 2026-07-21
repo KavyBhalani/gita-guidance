@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, sendEmailVerification } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -31,9 +31,10 @@ export default function SignupPage() {
         await updateProfile(userCredential.user, {
           displayName: name
         });
+        await sendEmailVerification(userCredential.user);
       }
 
-      router.push("/ask");
+      router.push("/verify-email");
     } catch (err: unknown) {
       console.error(err);
       const firebaseError = err as { code?: string };

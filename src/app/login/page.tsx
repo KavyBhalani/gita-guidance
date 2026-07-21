@@ -23,8 +23,12 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/ask");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      if (!userCredential.user.emailVerified) {
+        router.push("/verify-email");
+      } else {
+        router.push("/ask");
+      }
     } catch (err: unknown) {
       console.error(err);
       setError(t.auth.loginError);
@@ -102,6 +106,11 @@ export default function LoginPage() {
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl bg-black/5 text-foreground placeholder-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
               placeholder={t.auth.passwordPlaceholder}
             />
+            <div className="flex justify-end mt-2">
+              <Link href="/forgot-password" className="text-xs text-primary hover:text-primary-hover transition-colors font-medium">
+                {t.auth.forgotPassword}
+              </Link>
+            </div>
           </div>
 
           <button

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, Trash2, Share2, BookOpen, ArrowLeft } from "lucide-react";
+import { Loader2, Trash2, Share2, BookOpen, ArrowLeft, Star, WifiOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,8 @@ export default function JournalPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [isOffline, setIsOffline] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,8 +27,26 @@ export default function JournalPage() {
       router.push("/login");
       return;
     }
+    
+    if (!user.emailVerified) {
+      router.push("/verify-email");
+      return;
+    }
 
     const fetchAllChats = async () => {
+      const cacheKey = `chat_cache_${user.uid}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          setChats(parsed);
+          setLoading(false);
+        } catch (e) {
+          console.error("Cache parsing error", e);
+        }
+      }
+
       try {
         const q = query(
           collection(db, "users", user.uid, "chats"),
@@ -38,8 +58,17 @@ export default function JournalPage() {
           ...doc.data(),
         }));
         setChats(fetchedChats);
+        setIsOffline(false);
+        
+        const cacheable = fetchedChats.map((c: any) => ({
+          ...c,
+          cachedDate: c.timestamp?.toDate ? c.timestamp.toDate().toISOString() : null,
+          timestamp: null // strip non-serializable object
+        }));
+        localStorage.setItem(cacheKey, JSON.stringify(cacheable));
       } catch (error) {
         console.error("Error fetching journal:", error);
+        setIsOffline(true);
       } finally {
         setLoading(false);
       }
@@ -47,6 +76,32 @@ export default function JournalPage() {
 
     fetchAllChats();
   }, [user, authLoading, router]);
+
+  const handleToggleFavorite = async (id: string, currentStatus: boolean, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) return;
+    try {
+      // Optimistic update
+      setChats(prev => prev.map(chat => chat.id === id ? { ...chat, isFavorite: !currentStatus } : chat));
+      await updateDoc(doc(db, "users", user.uid, "chats", id), {
+        isFavorite: !currentStatus
+      });
+      
+      // Update cache
+      const cacheKey = `chat_cache_${user.uid}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const updatedCache = parsed.map((c: any) => c.id === id ? { ...c, isFavorite: !currentStatus } : c);
+        localStorage.setItem(cacheKey, JSON.stringify(updatedCache));
+      }
+    } catch (error) {
+      console.error("Failed to update favorite:", error);
+      // Revert optimistic update
+      setChats(prev => prev.map(chat => chat.id === id ? { ...chat, isFavorite: currentStatus } : chat));
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!user) return;
@@ -95,7 +150,30 @@ export default function JournalPage() {
         </div>
       </div>
 
-      {chats.length === 0 ? (
+      <div className="flex items-center gap-4 mb-6 border-b border-white/10 pb-4">
+        <button
+          onClick={() => setActiveTab("all")}
+          className={`px-6 py-2 rounded-full font-medium transition-colors ${activeTab === 'all' ? 'bg-primary text-background shadow-lg' : 'bg-white/5 text-foreground/70 hover:bg-white/10'}`}
+        >
+          {t.journal.all}
+        </button>
+        <button
+          onClick={() => setActiveTab("favorites")}
+          className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-colors ${activeTab === 'favorites' ? 'bg-primary text-background shadow-lg' : 'bg-white/5 text-foreground/70 hover:bg-white/10'}`}
+        >
+          <Star className="w-4 h-4" />
+          {t.journal.favorites}
+        </button>
+      </div>
+
+      {isOffline && (
+        <div className="mb-6 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center gap-2 text-orange-400 text-sm">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <p>{t.journal.offlineMode}</p>
+        </div>
+      )}
+
+      {chats.filter(c => activeTab === 'all' ? true : c.isFavorite).length === 0 ? (
         <div className="glass p-12 rounded-3xl text-center">
           <p className="text-foreground/80 text-lg mb-6">{t.journal.emptyText}</p>
           <Link href="/ask">
@@ -107,7 +185,7 @@ export default function JournalPage() {
       ) : (
         <div className="space-y-6">
           <AnimatePresence>
-            {chats.map((chat) => (
+            {chats.filter(c => activeTab === 'all' ? true : c.isFavorite).map((chat) => (
               <motion.div
                 key={chat.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -118,9 +196,15 @@ export default function JournalPage() {
                 {/* Subtle highlight */}
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
 
-                <div className="mb-4">
+                <div className="absolute top-6 right-6">
+                  <button onClick={(e) => handleToggleFavorite(chat.id, chat.isFavorite, e)} className="text-foreground/40 hover:text-primary transition-colors">
+                    <Star className={`w-6 h-6 ${chat.isFavorite ? 'fill-primary text-primary' : ''}`} />
+                  </button>
+                </div>
+
+                <div className="mb-4 pr-12">
                   <p className="text-sm text-foreground/60 uppercase tracking-wider font-semibold mb-2 flex justify-between items-center">
-                    <span>{chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : t.journal.justNow}</span>
+                    <span>{chat.cachedDate ? new Date(chat.cachedDate).toLocaleDateString() : (chat.timestamp?.toDate ? chat.timestamp.toDate().toLocaleDateString() : t.journal.justNow)}</span>
                   </p>
                   <h3 className="font-serif text-2xl text-foreground font-medium">&quot;{chat.question}&quot;</h3>
                 </div>

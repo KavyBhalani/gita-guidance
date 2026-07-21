@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, RefreshCcw, History } from "lucide-react";
+import { Send, Sparkles, RefreshCcw, History, Volume2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 import ChatSidebar from "@/components/ChatSidebar";
 
 export default function AskPage() {
@@ -30,7 +31,7 @@ export default function AskPage() {
     }
   };
 
-  // Rotating wisdom during the wait state
+  // rotating wisdom
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (state === "waiting") {
@@ -40,6 +41,14 @@ export default function AskPage() {
     }
     return () => clearInterval(interval);
   }, [state, t.ask.quotes.length]);
+
+  // Auth verification check
+  const router = useRouter();
+  useEffect(() => {
+    if (user && !user.emailVerified) {
+      router.push("/verify-email");
+    }
+  }, [user, router]);
 
   // Word-by-word reveal effect
   useEffect(() => {
@@ -115,6 +124,17 @@ export default function AskPage() {
     setResponse("");
     setDisplayedWords([]);
     setState("idle");
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
+  const handleListen = () => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(response);
+    utterance.lang = languageInfo.id === 'en' ? 'en-US' : languageInfo.id;
+    window.speechSynthesis.speak(utterance);
   };
 
   return (
@@ -186,6 +206,31 @@ export default function AskPage() {
                     <Send className="w-6 h-6 ml-1" />
                   </motion.button>
                 </form>
+
+                <div className="flex gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar w-full max-w-full">
+                  {[
+                    { label: "Anxiety & Stress", text: t.ask.chips.anxiety },
+                    { label: "Grief & Loss", text: t.ask.chips.grief },
+                    { label: "Dilemma at Work", text: t.ask.chips.dilemma },
+                    { label: "Anger & Patience", text: t.ask.chips.anger },
+                    { label: "Finding Purpose", text: t.ask.chips.purpose },
+                  ].map((chip, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setQuestion(chip.text);
+                        if (textareaRef.current) {
+                          textareaRef.current.style.height = "auto";
+                          textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+                        }
+                      }}
+                      className="whitespace-nowrap px-4 py-2 rounded-full glass border border-white/5 text-sm font-medium text-foreground/80 hover:bg-white/10 hover:text-primary transition-colors"
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
               </motion.div>
             )}
 
@@ -241,7 +286,16 @@ export default function AskPage() {
                 <div className="glass p-8 md:p-12 rounded-3xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
 
-                  <p className="font-serif text-xl md:text-2xl leading-loose text-foreground min-h-[200px]">
+                  <div className="absolute top-4 right-4 z-10">
+                    <button
+                      onClick={handleListen}
+                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium border border-primary/20"
+                    >
+                      <Volume2 className="w-4 h-4" /> {t.ask.listen}
+                    </button>
+                  </div>
+
+                  <p className="font-serif text-xl md:text-2xl leading-loose text-foreground min-h-[200px] mt-4">
                     {displayedWords.map((word, i) => (
                       <motion.span
                         key={i}

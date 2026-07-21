@@ -17,7 +17,7 @@ export default function ChatSidebar({ refreshTrigger, isOpen, onClose }: { refre
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.emailVerified) {
       setTimeout(() => {
         setRecentChats([]);
         setLoading(false);
@@ -26,6 +26,18 @@ export default function ChatSidebar({ refreshTrigger, isOpen, onClose }: { refre
     }
 
     const fetchChats = async () => {
+      const cacheKey = `chat_cache_${user.uid}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          setRecentChats(parsed.slice(0, 5));
+          setLoading(false);
+        } catch (e) {
+          console.error("Sidebar cache error", e);
+        }
+      }
+
       try {
         const q = query(
           collection(db, "users", user.uid, "chats"),
