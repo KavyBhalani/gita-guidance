@@ -78,6 +78,24 @@ export default function AboutPage() {
             </p>
           </motion.section>
 
+          {/* Creator Section */}
+          <motion.section variants={itemVariants} className="glass p-8 md:p-12 rounded-3xl relative overflow-hidden border border-border">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-[80px] pointer-events-none"></div>
+            <h2 className="font-serif text-3xl font-bold mb-6 text-foreground flex items-center gap-3">
+              <BookOpen className="w-8 h-8 text-primary" />
+              Who Built This Tool?
+            </h2>
+            <p className="text-lg text-foreground/80 leading-relaxed mb-6">
+              Gita Guidance was carefully crafted by <strong>The Gita Guidance Team</strong>, a dedicated group of developers, designers, and spiritual seekers. Our vision was to create a sanctuary on the internet where the timeless wisdom of the Bhagavad Gita could be accessed by anyone, regardless of their background or current life situation. 
+            </p>
+            <p className="text-lg text-foreground/80 leading-relaxed mb-6">
+              By combining modern AI technology with ancient scriptures, we hope to bridge the gap between historical philosophy and contemporary challenges.
+            </p>
+            <p className="text-lg text-foreground/80 leading-relaxed mb-6">
+              For inquiries, collaborations, or support, feel free to reach out to us at <a href="mailto:gitaguidanceweb@gmail.com" className="text-primary hover:underline font-medium">gitaguidanceweb@gmail.com</a>.
+            </p>
+          </motion.section>
+
           {/* Technology Section */}
           <motion.section variants={itemVariants} className="glass p-8 md:p-12 rounded-3xl relative overflow-hidden border border-border">
             <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-[80px] pointer-events-none"></div>
