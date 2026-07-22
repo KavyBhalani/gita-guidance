@@ -4,6 +4,7 @@ import { getPostBySlug, getAllPosts } from "@/lib/blog";
 import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, Clock, User } from "lucide-react";
+import { BlogActions } from "@/components/BlogActions";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -57,10 +58,13 @@ export default async function BlogPostPage({
 
   return (
     <main className="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8 mt-8 mb-20 relative z-10">
-      <Link href="/blog" className="inline-flex items-center gap-2 text-primary hover:text-primary-hover mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4" />
-        Back to Blog
-      </Link>
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/blog" className="inline-flex items-center gap-2 text-primary hover:text-primary-hover transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Blog
+        </Link>
+        <BlogActions slug={post.slug} rawText={post.content} />
+      </div>
 
       <article className="glass rounded-3xl p-8 md:p-12 border border-white/5">
         <header className="mb-10 pb-10 border-b border-white/10 text-center">
