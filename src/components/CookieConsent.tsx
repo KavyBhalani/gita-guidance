@@ -55,10 +55,10 @@ export default function CookieConsent() {
           </div>
           <div>
             <h3 className="text-foreground font-semibold mb-1">
-              {t.home?.cookieTitle || "We value your privacy"}
+              We value your privacy
             </h3>
             <p className="text-foreground/70 text-sm leading-relaxed max-w-3xl">
-              {t.home?.cookieDesc || "We use cookies to enhance your browsing experience, serve personalized ads, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies in accordance with Google Consent Mode v2 requirements."} 
+              We use cookies to enhance your browsing experience, serve personalized ads, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies in accordance with Google Consent Mode v2 requirements.
               <Link href="/privacy" className="text-primary hover:underline ml-1">
                 Read our Privacy Policy.
               </Link>
@@ -70,13 +70,13 @@ export default function CookieConsent() {
             onClick={declineCookies}
             className="px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-white/5 rounded-full transition-colors border border-border"
           >
-            {t.home?.cookieDecline || "Decline"}
+            Decline
           </button>
           <button
             onClick={acceptCookies}
             className="px-6 py-2 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary-hover rounded-full transition-colors shadow-lg"
           >
-            {t.home?.cookieAccept || "Accept All"}
+            Accept All
           </button>
           <button 
             onClick={() => setIsVisible(false)}
