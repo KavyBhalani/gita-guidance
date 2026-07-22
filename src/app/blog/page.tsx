@@ -1,51 +1,48 @@
-"use client";
-
-import React from "react";
+import { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Calendar, ArrowRight } from "lucide-react";
-import { blogPosts } from "@/lib/blog-data";
+import { getAllPosts } from "@/lib/blog";
+
+export const metadata: Metadata = {
+  title: "Spiritual Wisdom Blog | Gita Guidance",
+  description: "Read in-depth articles, insights, and lessons derived from the Bhagavad Gita.",
+};
 
 export default function BlogIndexPage() {
+  const posts = getAllPosts();
+
   return (
-    <main className="flex-1 overflow-hidden relative py-20 px-4">
-      {/* Background glow effects */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+    <main className="flex-1 max-w-6xl mx-auto w-full p-4 md:p-8 mt-12 mb-20 relative z-10">
+      <div className="text-center mb-16">
+        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-primary">Spiritual Wisdom Blog</h1>
+        <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
+          Deep dive into the timeless teachings of the Bhagavad Gita and learn how to apply them to modern life challenges.
+        </p>
+      </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6">
-            <BookOpen className="w-5 h-5" />
-            <span>Spiritual Articles</span>
-          </div>
-          <h1 className="font-serif text-4xl md:text-6xl font-bold mb-6 text-foreground">
-            Wisdom Blog
-          </h1>
-          <p className="text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-            Explore ancient teachings and modern insights curated by The Gita Guidance Team.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-8">
-          {blogPosts.map((post) => (
-            <Link href={`/blog/${post.slug}`} key={post.slug}>
-              <div className="glass p-8 rounded-3xl border border-white/5 shadow-lg hover:-translate-y-1 hover:shadow-primary/20 transition-all group">
-                <div className="flex items-center gap-2 text-foreground/50 text-sm mb-4">
-                  <Calendar className="w-4 h-4" />
-                  <span>{post.date}</span>
-                </div>
-                <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h2>
-                <p className="text-foreground/70 text-lg leading-relaxed mb-6">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center gap-2 text-primary font-semibold group-hover:underline">
-                  Read Article <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post) => (
+          <article key={post.slug} className="glass rounded-3xl p-6 border border-white/5 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full">
+            <div className="mb-4">
+              <span className="text-primary text-xs font-semibold uppercase tracking-wider">
+                {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
+            <Link href={`/blog/${post.slug}`} className="flex-1">
+              <h2 className="font-serif text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                {post.title}
+              </h2>
+              <p className="text-foreground/70 line-clamp-3 mb-6">
+                {post.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
+              </p>
             </Link>
-          ))}
-        </div>
+            <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+              <span className="text-sm text-foreground/50">{post.author}</span>
+              <Link href={`/blog/${post.slug}`} className="text-primary font-medium text-sm hover:underline">
+                Read Article →
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
     </main>
   );
