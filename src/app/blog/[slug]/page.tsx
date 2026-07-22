@@ -50,19 +50,11 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  // Split markdown into blocks (paragraphs, headings, etc.)
-  const markdownBlocks = post.content.split(/\n\n+/).filter(c => c.trim().length > 0);
-  
-  const blocks = markdownBlocks.map(block => {
-    return {
-      html: marked.parse(block) as string,
-      text: block.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`\[\]]/g, '').trim()
-    };
-  });
+  const htmlContent = marked.parse(post.content);
   
   // Calculate read time
-  const totalText = blocks.map(b => b.text).join(' ');
-  const wordCount = totalText.split(/\s+/g).length;
+  const cleanText = post.content.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`\[\]]/g, '');
+  const wordCount = cleanText.split(/\s+/g).length;
   const readTime = Math.ceil(wordCount / 200); // Average reading speed
 
   return (
@@ -105,7 +97,7 @@ export default async function BlogPostPage({
 
         <BlogClientContent 
           slug={post.slug} 
-          blocks={blocks}
+          htmlContent={htmlContent as string}
         />
         
       </article>

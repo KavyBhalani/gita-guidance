@@ -43,16 +43,43 @@ export function useFavoriteBlogs() {
     return () => unsubscribe();
   }, []);
 
+  // Listen to custom event for cross-component sync on the same page
+  useEffect(() => {
+    const handleSync = () => {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setFavoriteSlugs(JSON.parse(stored));
+      }
+    };
+    window.addEventListener("favoriteBlogsUpdated", handleSync);
+    return () => window.removeEventListener("favoriteBlogsUpdated", handleSync);
+  }, []);
+
   // Firebase listener
   useEffect(() => {
     if (!user) return;
 
     const favoritesRef = collection(db, "users", user.uid, "favoriteBlogs");
     const unsubscribe = onSnapshot(favoritesRef, (snapshot) => {
-      const slugs = snapshot.docs.map(doc => doc.id);
-      setFavoriteSlugs(slugs);
-      // Keep local storage in sync
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(slugs));
+      const firebaseSlugs = snapshot.docs.map(doc => doc.id);
+      
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const localSlugs: string[] = stored ? JSON.parse(stored) : [];
+      
+      const mergedSlugs = Array.from(new Set([...firebaseSlugs, ...localSlugs]));
+      
+      setFavoriteSlugs(mergedSlugs);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedSlugs));
+      
+      // Attempt to heal Firebase silently if local has items missing in DB
+      const missingInFirebase = localSlugs.filter(slug => !firebaseSlugs.includes(slug));
+      missingInFirebase.forEach(async (slug) => {
+        try {
+          const docRef = doc(db, "users", user.uid, "favoriteBlogs", slug);
+          await setDoc(docRef, { addedAt: new Date().toISOString() });
+        } catch (e) {}
+      });
+
       setIsLoading(false);
     }, (error) => {
       console.error("Error fetching favorite blogs:", error);
@@ -71,6 +98,8 @@ export function useFavoriteBlogs() {
       : [...favoriteSlugs, slug];
       
     setFavoriteSlugs(newSlugs);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newSlugs));
+    window.dispatchEvent(new Event("favoriteBlogsUpdated"));
 
     if (user) {
       // Firebase update
