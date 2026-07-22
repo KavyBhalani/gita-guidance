@@ -8,17 +8,21 @@ import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firesto
 const STORAGE_KEY = "gita_guidance_favorite_blogs";
 
 export function useFavoriteBlogs() {
-  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) return JSON.parse(stored);
-      } catch (e) {}
-    }
-    return [];
-  });
+  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Hydration safely
+  useEffect(() => {
+    setIsMounted(true);
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setFavoriteSlugs(JSON.parse(stored));
+      }
+    } catch (e) {}
+  }, []);
 
   // Auth listener
   useEffect(() => {
@@ -122,7 +126,7 @@ export function useFavoriteBlogs() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newSlugs));
   };
 
-  const isFavorite = (slug: string) => favoriteSlugs.includes(slug);
+  const isFavorite = (slug: string) => isMounted ? favoriteSlugs.includes(slug) : false;
 
   return { favoriteSlugs, toggleFavorite, isFavorite, isLoading };
 }
