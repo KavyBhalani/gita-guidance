@@ -55,7 +55,7 @@ export const en: TranslationDictionary = {
     seoHeader: "Gita Guidance: Your Spiritual AI Companion",
     seoDesc: "Welcome to Gita Guidance, a revolutionary AI-powered spiritual companion designed to help you navigate modern life's challenges using the timeless wisdom of the Bhagavad Gita. Our platform leverages advanced artificial intelligence to provide personalized, context-aware advice deeply rooted in ancient Vedic philosophy.",
     seoHowToTitle: "How to Use This AI Tool",
-    seoHowToDesc: "Using Gita Guidance is simple and intuitive. Begin by navigating to our Ask page. You can type any question, dilemma, or thought into the input box. Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna.",
+    seoHowToDesc: "Using Gita Guidance is simple and intuitive. Begin by navigating to our <a href='/ask'>Ask page</a>. You can type any question, dilemma, or thought into the input box. Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna.",
     seoFeaturesTitle: "Key Features",
     seoFeaturesList1: "AI-Powered Insights: Contextual answers drawn directly from the philosophy of the Bhagavad Gita.",
     seoFeaturesList2: "Personal Spiritual Journal: Automatically save your questions and the divine guidance you receive.",

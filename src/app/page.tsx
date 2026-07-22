@@ -88,9 +88,12 @@ export default function Home() {
           </p>
           
           <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">{t.home.seoHowToTitle || "How to Use This AI Tool"}</h3>
-          <p className="mb-8 leading-relaxed">
-            {t.home.seoHowToDesc || "Using Gita Guidance is simple and intuitive. Begin by navigating to our 'Ask' page. You can type any question, dilemma, or thought into the input box. Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna."}
-          </p>
+          <p 
+            className="mb-8 leading-relaxed [&>a]:text-primary [&>a]:hover:underline [&>a]:font-bold"
+            dangerouslySetInnerHTML={{ 
+              __html: t.home.seoHowToDesc || "Using Gita Guidance is simple and intuitive. Begin by navigating to our <a href='/ask'>Ask page</a>. You can type any question, dilemma, or thought into the input box. Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna." 
+            }} 
+          />
 
           <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">{t.home.seoFeaturesTitle || "Key Features"}</h3>
           <ul className="list-disc pl-6 mb-8 space-y-2 leading-relaxed">

@@ -1,8 +1,8 @@
 import React from "react";
-import { Calendar } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Calendar } from "lucide-react";
 import { blogPosts } from "@/lib/blog-data";
 import { notFound } from "next/navigation";
-import { BlogBackButton, BlogAuthorLabel } from "@/components/BlogClientUI";
 
 export function generateStaticParams() {
   return blogPosts.map((post) => ({
@@ -24,7 +24,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <div className="absolute top-0 right-1/2 translate-x-1/2 w-[800px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <BlogBackButton />
+        <Link href="/blog" className="inline-flex items-center gap-2 text-foreground/50 hover:text-primary transition-colors mb-8">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Blog
+        </Link>
 
         <article className="glass p-8 md:p-12 rounded-3xl border border-white/5 shadow-lg">
           <header className="mb-10 text-center border-b border-white/10 pb-10">
@@ -35,7 +38,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <Calendar className="w-4 h-4" />
               <span>{post.date}</span>
               <span className="mx-2">•</span>
-              <BlogAuthorLabel />
+              <span>By The Gita Guidance Team</span>
             </div>
           </header>
 
