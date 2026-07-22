@@ -13,7 +13,11 @@ interface BlogClientContentProps {
 export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientContentProps) {
   const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
   const [charIndex, setCharIndex] = useState<number>(-1);
+  const [chunkIndex, setChunkIndex] = useState<number>(-1);
   const { isFavorite, toggleFavorite } = useFavoriteBlogs();
+
+  // Split cleanText into paragraphs for reliable TTS playback
+  const chunks = cleanText.split(/\n+/).filter(c => c.trim().length > 0);
 
   useEffect(() => {
     return () => {
@@ -22,6 +26,44 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
       }
     };
   }, []);
+
+  const playChunk = (index: number) => {
+    if (index >= chunks.length) {
+      setSpeechState("idle");
+      setChunkIndex(-1);
+      setCharIndex(-1);
+      return;
+    }
+    
+    setChunkIndex(index);
+    setCharIndex(0);
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(chunks[index]);
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.lang.includes("en-US") && v.name.includes("Google"));
+    if (preferredVoice) utterance.voice = preferredVoice;
+
+    utterance.onboundary = (e) => {
+      if (e.name === "word") {
+        setCharIndex(e.charIndex);
+      }
+    };
+
+    utterance.onend = () => {
+      // Play next chunk
+      playChunk(index + 1);
+    };
+
+    utterance.onerror = (e) => {
+      console.error("Speech synthesis error", e);
+      setSpeechState("idle");
+      setChunkIndex(-1);
+      setCharIndex(-1);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handleSpeechToggle = () => {
     if (!window.speechSynthesis) return;
@@ -38,37 +80,9 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
       return;
     }
 
-    // Start speaking
-    window.speechSynthesis.cancel();
-    setCharIndex(0);
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(v => v.lang.includes("en-US") && v.name.includes("Google"));
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
-
-    utterance.onboundary = (e) => {
-      if (e.name === "word") {
-        setCharIndex(e.charIndex);
-      }
-    };
-
-    utterance.onend = () => {
-      setSpeechState("idle");
-      setCharIndex(-1);
-    };
-
-    utterance.onerror = (e) => {
-      console.error("Speech synthesis error", e);
-      setSpeechState("idle");
-      setCharIndex(-1);
-    };
-
-    window.speechSynthesis.speak(utterance);
+    // Start speaking from first chunk
     setSpeechState("playing");
+    playChunk(0);
   };
 
   const handleStopListen = () => {
@@ -76,13 +90,13 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
       window.speechSynthesis.cancel();
     }
     setSpeechState("idle");
+    setChunkIndex(-1);
     setCharIndex(-1);
   };
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("Toggling favorite for", slug);
     await toggleFavorite(slug);
   };
 
@@ -137,9 +151,13 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
 
       {speechState !== "idle" ? (
         <div className="bg-black/20 p-6 md:p-8 rounded-2xl border border-white/5 mb-8 relative">
-           <p className="text-foreground/90 leading-loose font-serif text-xl whitespace-pre-wrap">
-             {renderHighlightedText(cleanText, charIndex)}
-           </p>
+           <div className="text-foreground/90 leading-loose font-serif text-xl space-y-6">
+             {chunks.map((chunk, i) => (
+               <p key={i} className={i === chunkIndex ? "text-foreground font-medium" : "text-foreground/40"}>
+                 {i === chunkIndex ? renderHighlightedText(chunk, charIndex) : chunk}
+               </p>
+             ))}
+           </div>
         </div>
       ) : (
         <div 
