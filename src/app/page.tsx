@@ -163,6 +163,7 @@ export default function Home() {
               <h4 className="text-gray-100 font-semibold mb-6">Resources</h4>
               <ul className="space-y-4">
                 <li><Link href="/blog" className="text-gray-400 hover:text-primary transition-colors">Wisdom Blog</Link></li>
+                <li><Link href="/contact" className="text-gray-400 hover:text-primary transition-colors">{t.home.contactUs || "Contact Us"}</Link></li>
               </ul>
             </div>
           </div>

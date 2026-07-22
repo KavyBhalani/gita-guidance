@@ -64,6 +64,7 @@ export interface TranslationDictionary {
     seekGuidance: string;
     yourJournal: string;
     aboutUs: string;
+    contactUs?: string;
     legal: string;
     privacyPolicy: string;
     termsOfService: string;

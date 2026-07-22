@@ -48,10 +48,18 @@ export default function PrivacyPolicyPage() {
             Your data is stored securely using Google Firebase. We employ enterprise-grade security measures to protect your personal information and journal entries. Additionally, your recent chats are cached locally on your device (`localStorage`) to provide offline access and faster loading times. This local data remains on your personal device.
           </p>
 
-          <h2 className="text-2xl font-serif font-bold text-foreground mt-8 mb-4">4. Third-Party Services</h2>
+          <h2 className="text-2xl font-serif font-bold text-foreground mt-8 mb-4">4. Third-Party Services and Advertising</h2>
           <p>
-            Our application relies on third-party services, including Google AdSense and OpenAI (or similar LLM providers), to process AI interactions and display advertisements. These third parties may use cookies, web beacons, or similar technologies to collect information about your interactions with our app for analytical or advertising purposes.
+            Our application relies on third-party services, including Google AdSense and OpenAI (or similar LLM providers), to process AI interactions and display advertisements.
           </p>
+          <p className="mt-4">
+            <strong>Google AdSense and Cookies:</strong>
+          </p>
+          <ul className="list-disc pl-6 space-y-2 mt-2">
+            <li>Third party vendors, including Google, use cookies to serve ads based on your prior visits to this website or other websites.</li>
+            <li>Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our sites and/or other sites on the Internet.</li>
+            <li>Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Ads Settings</a>.</li>
+          </ul>
 
           <h2 className="text-2xl font-serif font-bold text-foreground mt-8 mb-4">5. Contact Us</h2>
           <p>
