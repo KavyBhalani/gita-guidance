@@ -82,42 +82,42 @@ export default function Home() {
       {/* SEO & FAQ Section (For AdSense & Search Engines) */}
       <section className="py-24 px-4 bg-background relative z-10 border-t border-white/5">
         <div className="max-w-4xl mx-auto text-gray-300">
-          <h2 className="font-serif text-3xl font-bold mb-6 text-gray-100">Gita Guidance: Your Spiritual AI Companion</h2>
+          <h2 className="font-serif text-3xl font-bold mb-6 text-gray-100">{t.home.seoHeader || "Gita Guidance: Your Spiritual AI Companion"}</h2>
           <p className="mb-8 leading-relaxed">
-            Welcome to Gita Guidance, a revolutionary AI-powered spiritual companion designed to help you navigate modern life's challenges using the timeless wisdom of the Bhagavad Gita. Our platform leverages advanced artificial intelligence to provide personalized, context-aware advice deeply rooted in ancient Vedic philosophy. Whether you are facing dilemmas in your career, relationships, or personal growth, our tool offers profound insights to guide your journey.
+            {t.home.seoDesc || "Welcome to Gita Guidance, a revolutionary AI-powered spiritual companion designed to help you navigate modern life's challenges using the timeless wisdom of the Bhagavad Gita. Our platform leverages advanced artificial intelligence to provide personalized, context-aware advice deeply rooted in ancient Vedic philosophy."}
           </p>
           
-          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">How to Use This AI Tool</h3>
+          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">{t.home.seoHowToTitle || "How to Use This AI Tool"}</h3>
           <p className="mb-8 leading-relaxed">
-            Using Gita Guidance is simple and intuitive. Begin by navigating to our "Ask" page. You can type any question, dilemma, or thought into the input box. For example, you might ask, "How do I deal with workplace stress?" or "What is my true purpose in life?" Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna. Within seconds, you receive a detailed, customized response that bridges ancient wisdom with your contemporary situation. You can even click the audio button to have the guidance read aloud to you, creating a deeply immersive spiritual experience.
+            {t.home.seoHowToDesc || "Using Gita Guidance is simple and intuitive. Begin by navigating to our 'Ask' page. You can type any question, dilemma, or thought into the input box. Our specialized AI engine analyzes your query and matches it against the teachings of Lord Krishna."}
           </p>
 
-          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">Key Features</h3>
+          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">{t.home.seoFeaturesTitle || "Key Features"}</h3>
           <ul className="list-disc pl-6 mb-8 space-y-2 leading-relaxed">
-            <li><strong>AI-Powered Insights:</strong> Contextual answers drawn directly from the philosophy of the Bhagavad Gita.</li>
-            <li><strong>Personal Spiritual Journal:</strong> Automatically save your questions and the divine guidance you receive. Add your own private reflection notes to track your spiritual growth.</li>
-            <li><strong>Multi-Language Support:</strong> Access wisdom in 11 different languages including English, Hindi, Gujarati, and Sanskrit.</li>
-            <li><strong>Text-to-Speech Audio:</strong> Listen to the guidance with real-time text highlighting for an accessible, hands-free experience.</li>
-            <li><strong>Offline Mode & Caching:</strong> Your journal entries are securely cached locally, ensuring you can read your past reflections even without an internet connection.</li>
+            <li><strong>{t.home.seoFeaturesList1 || "AI-Powered Insights: Contextual answers drawn directly from the philosophy of the Bhagavad Gita."}</strong></li>
+            <li><strong>{t.home.seoFeaturesList2 || "Personal Spiritual Journal: Automatically save your questions and the divine guidance you receive."}</strong></li>
+            <li><strong>{t.home.seoFeaturesList3 || "Multi-Language Support: Access wisdom in 11 different languages."}</strong></li>
+            <li><strong>{t.home.seoFeaturesList4 || "Text-to-Speech Audio: Listen to the guidance with real-time text highlighting."}</strong></li>
+            <li><strong>{t.home.seoFeaturesList5 || "Offline Mode & Caching: Your journal entries are securely cached locally."}</strong></li>
           </ul>
 
-          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">Frequently Asked Questions (FAQ)</h3>
+          <h3 className="font-serif text-2xl font-bold mb-4 text-gray-100">{t.home.seoFaqTitle || "Frequently Asked Questions (FAQ)"}</h3>
           <div className="space-y-6">
             <div>
-              <h4 className="font-bold text-gray-200">Is this real Artificial Intelligence?</h4>
-              <p className="leading-relaxed text-gray-400">Yes, Gita Guidance utilizes state-of-the-art Large Language Models (LLMs) that have been specifically instructed to align their responses with the philosophy, tone, and teachings of the Bhagavad Gita.</p>
+              <h4 className="font-bold text-gray-200">{t.home.seoFaqQ1 || "Is this real Artificial Intelligence?"}</h4>
+              <p className="leading-relaxed text-gray-400">{t.home.seoFaqA1 || "Yes, Gita Guidance utilizes state-of-the-art Large Language Models (LLMs) that have been specifically instructed to align their responses with the philosophy, tone, and teachings of the Bhagavad Gita."}</p>
             </div>
             <div>
-              <h4 className="font-bold text-gray-200">Is my personal data and journal private?</h4>
-              <p className="leading-relaxed text-gray-400">Absolutely. We use enterprise-grade Firebase authentication to secure your account. Your journal entries and reflection notes are completely private and tied securely to your unique user ID.</p>
+              <h4 className="font-bold text-gray-200">{t.home.seoFaqQ2 || "Is my personal data and journal private?"}</h4>
+              <p className="leading-relaxed text-gray-400">{t.home.seoFaqA2 || "Absolutely. We use enterprise-grade Firebase authentication to secure your account. Your journal entries and reflection notes are completely private."}</p>
             </div>
             <div>
-              <h4 className="font-bold text-gray-200">Is this tool free to use?</h4>
-              <p className="leading-relaxed text-gray-400">Yes, Gita Guidance is provided as a free tool to help spread spiritual awareness and provide peace of mind to seekers around the world.</p>
+              <h4 className="font-bold text-gray-200">{t.home.seoFaqQ3 || "Is this tool free to use?"}</h4>
+              <p className="leading-relaxed text-gray-400">{t.home.seoFaqA3 || "Yes, Gita Guidance is provided as a free tool to help spread spiritual awareness and provide peace of mind."}</p>
             </div>
             <div>
-              <h4 className="font-bold text-gray-200">Who built this tool?</h4>
-              <p className="leading-relaxed text-gray-400">This platform was developed by The Gita Guidance Team, a group of developers and spiritual enthusiasts dedicated to making ancient wisdom accessible to the modern world through technology. You can contact us at <a href="mailto:gitaguidanceweb@gmail.com" className="text-primary hover:underline">gitaguidanceweb@gmail.com</a>.</p>
+              <h4 className="font-bold text-gray-200">{t.home.seoFaqQ4 || "Who built this tool?"}</h4>
+              <p className="leading-relaxed text-gray-400">{t.home.seoFaqA4 || "This platform was developed by The Gita Guidance Team, a group of developers and spiritual enthusiasts dedicated to making ancient wisdom accessible to the modern world through technology. You can contact us at"} <a href="mailto:gitaguidanceweb@gmail.com" className="text-primary hover:underline">gitaguidanceweb@gmail.com</a>.</p>
             </div>
           </div>
         </div>

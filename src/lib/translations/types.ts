@@ -69,6 +69,25 @@ export interface TranslationDictionary {
     termsOfService: string;
     rightsReserved: string;
     securedByFirebase: string;
+    seoHeader: string;
+    seoDesc: string;
+    seoHowToTitle: string;
+    seoHowToDesc: string;
+    seoFeaturesTitle: string;
+    seoFeaturesList1: string;
+    seoFeaturesList2: string;
+    seoFeaturesList3: string;
+    seoFeaturesList4: string;
+    seoFeaturesList5: string;
+    seoFaqTitle: string;
+    seoFaqQ1: string;
+    seoFaqA1: string;
+    seoFaqQ2: string;
+    seoFaqA2: string;
+    seoFaqQ3: string;
+    seoFaqA3: string;
+    seoFaqQ4: string;
+    seoFaqA4: string;
   };
   ask: {
     quotes: string[];
@@ -102,6 +121,9 @@ export interface TranslationDictionary {
     missionTitle: string;
     missionP1: string;
     missionP2: string;
+    creatorTitle: string;
+    creatorP1: string;
+    creatorP2: string;
     wisdomTitle: string;
     wisdomP1: string;
     wisdomP2: string;
