@@ -21,19 +21,31 @@ export default function Footer() {
     try {
       // Lazy import to keep footer light until needed
       const { db } = await import("@/lib/firebase");
-      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+      const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
       
-      await addDoc(collection(db, "newsletter_subscribers"), {
-        email,
+      const emailLower = email.trim().toLowerCase();
+      
+      // We use the email as the Document ID.
+      // Because your Firebase rule says `allow create: if true;` and `allow update: if false;`
+      // the first time they subscribe, it succeeds.
+      // If they subscribe again, Firebase blocks the update, which elegantly prevents duplicates!
+      await setDoc(doc(db, "newsletter_subscribers", emailLower), {
+        email: emailLower,
         subscribedAt: serverTimestamp(),
         source: "footer_widget"
       });
       
       setEmail("");
       alert("Thank you! You have successfully subscribed to our wisdom newsletter.");
-    } catch (error) {
-      console.error("Subscription error:", error);
-      alert("Oops! Something went wrong. Please try again later.");
+    } catch (error: any) {
+      if (error.code === 'permission-denied') {
+        // They tried to update an existing subscription, meaning they are already on the list!
+        setEmail("");
+        alert("You are already subscribed to our newsletter! Thank you for your continued interest.");
+      } else {
+        console.error("Subscription error:", error);
+        alert("Oops! Something went wrong. Please try again later.");
+      }
     } finally {
       setIsSubscribing(false);
     }
