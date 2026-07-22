@@ -103,6 +103,15 @@ export const en: TranslationDictionary = {
     readReflection: "Read reflection",
     seeAllChats: "See all past chats",
   },
+
+  blog: {
+    badge: "Spiritual Articles",
+    title: "Wisdom Blog",
+    subtitle: "Explore ancient teachings and modern insights curated by The Gita Guidance Team.",
+    readArticle: "Read Article",
+    backToBlog: "Back to Blog",
+    byTeam: "By The Gita Guidance Team",
+  },
   about: {
     badge: "Our Purpose",
     title: "About Gita Guidance",

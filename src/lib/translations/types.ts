@@ -114,6 +114,14 @@ export interface TranslationDictionary {
     readReflection: string;
     seeAllChats: string;
   };
+  blog: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    readArticle: string;
+    backToBlog: string;
+    byTeam: string;
+  };
   about: {
     badge: string;
     title: string;

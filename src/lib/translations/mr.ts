@@ -103,6 +103,15 @@ export const mr: TranslationDictionary = {
     readReflection: "चिंतन वाचा",
     seeAllChats: "सर्व मागील संभाषणे पहा",
   },
+
+  blog: {
+    badge: "अध्यात्मिक लेख",
+    title: "बुद्धीचा ब्लॉग",
+    subtitle: "गीता मार्गदर्शन टीमने तयार केलेल्या प्राचीन शिकवणी आणि आधुनिक अंतर्दृष्टी एक्सप्लोर करा.",
+    readArticle: "लेख वाचा",
+    backToBlog: "ब्लॉगवर परत",
+    byTeam: "गीता मार्गदर्शन संघातर्फे",
+  },
   about: {
     badge: "आमचा उद्देश",
     title: "गीता मार्गदर्शनाबद्दल",

@@ -1,9 +1,14 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { BookOpen, Calendar, ArrowRight } from "lucide-react";
 import { blogPosts } from "@/lib/blog-data";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BlogIndexPage() {
+  const { t } = useLanguage();
+
   return (
     <main className="flex-1 overflow-hidden relative py-20 px-4">
       {/* Background glow effects */}
@@ -13,13 +18,13 @@ export default function BlogIndexPage() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6">
             <BookOpen className="w-5 h-5" />
-            <span>Spiritual Articles</span>
+            <span>{t.blog?.badge || "Spiritual Articles"}</span>
           </div>
           <h1 className="font-serif text-4xl md:text-6xl font-bold mb-6 text-foreground">
-            Wisdom Blog
+            {t.blog?.title || "Wisdom Blog"}
           </h1>
           <p className="text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-            Explore ancient teachings and modern insights curated by The Gita Guidance Team.
+            {t.blog?.subtitle || "Explore ancient teachings and modern insights curated by The Gita Guidance Team."}
           </p>
         </div>
 
@@ -38,7 +43,7 @@ export default function BlogIndexPage() {
                   {post.excerpt}
                 </p>
                 <div className="flex items-center gap-2 text-primary font-semibold group-hover:underline">
-                  Read Article <ArrowRight className="w-4 h-4" />
+                  {t.blog?.readArticle || "Read Article"} <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
             </Link>

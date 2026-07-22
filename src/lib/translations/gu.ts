@@ -103,6 +103,15 @@ export const gu: TranslationDictionary = {
     readReflection: "ચિંતન વાંચો",
     seeAllChats: "તમામ અગાઉની વાતચીતો જુઓ",
   },
+
+  blog: {
+    badge: "આધ્યાત્મિક લેખો",
+    title: "વિઝડમ બ્લોગ",
+    subtitle: "ગીતા ગાઇડન્સ ટીમ દ્વારા ક્યુરેટ કરાયેલ પ્રાચીન ઉપદેશો અને આધુનિક આંતરદૃષ્ટિનું અન્વેષણ કરો.",
+    readArticle: "લેખ વાંચો",
+    backToBlog: "બ્લોગ પર પાછા",
+    byTeam: "ગીતા માર્ગદર્શન ટીમ દ્વારા",
+  },
   about: {
     badge: "અમારો હેતુ",
     title: "ગીતા માર્ગદર્શન વિશે",

@@ -103,6 +103,15 @@ export const pa: TranslationDictionary = {
     readReflection: "ਚਿੰਤਨ ਪੜ੍ਹੋ",
     seeAllChats: "ਸਾਰੀਆਂ ਪੁਰਾਣੀਆਂ ਗੱਲਾਂਬਾਤਾਂ ਦੇਖੋ",
   },
+
+  blog: {
+    badge: "ਅਧਿਆਤਮਿਕ ਲੇਖ",
+    title: "ਸਿਆਣਪ ਬਲੌਗ",
+    subtitle: "ਗੀਤਾ ਗਾਈਡੈਂਸ ਟੀਮ ਦੁਆਰਾ ਤਿਆਰ ਕੀਤੀਆਂ ਪ੍ਰਾਚੀਨ ਸਿੱਖਿਆਵਾਂ ਅਤੇ ਆਧੁਨਿਕ ਸੂਝ ਦੀ ਪੜਚੋਲ ਕਰੋ।",
+    readArticle: "ਲੇਖ ਪੜ੍ਹੋ",
+    backToBlog: "ਬਲੌਗ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    byTeam: "ਗੀਤਾ ਗਾਈਡੈਂਸ ਟੀਮ ਦੁਆਰਾ",
+  },
   about: {
     badge: "ਸਾਡਾ ਉਦੇਸ਼",
     title: "ਗੀਤਾ ਮਾਰਗਦਰਸ਼ਨ ਬਾਰੇ",
