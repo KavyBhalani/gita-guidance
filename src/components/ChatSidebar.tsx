@@ -9,11 +9,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MessageSquare, ArrowRight, Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { Chat } from "@/types/chat";
+
 export default function ChatSidebar({ refreshTrigger, isOpen, onClose }: { refreshTrigger?: number, isOpen?: boolean, onClose?: () => void }) {
   const { user } = useAuth();
   const { t } = useLanguage();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [recentChats, setRecentChats] = useState<any[]>([]);
+  const [recentChats, setRecentChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function ChatSidebar({ refreshTrigger, isOpen, onClose }: { refre
         const chats = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }));
+        })) as Chat[];
         setRecentChats(chats);
       } catch (error) {
         console.error("Error fetching recent chats:", error);

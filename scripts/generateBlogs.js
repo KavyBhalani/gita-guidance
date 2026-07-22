@@ -71,7 +71,13 @@ async function generateArticle(topic) {
         languageCode: "en"
       })
     });
+    
     const data = await response.json();
+    
+    if (!response.ok) {
+        console.error(`Backend API Error (Status ${response.status}):`, data.detail || data);
+    }
+    
     return data.answer || data.response || data.message || "Error generating content";
   } catch (error) {
     console.error("Error generating", topic, error);

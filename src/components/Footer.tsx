@@ -37,8 +37,9 @@ export default function Footer() {
       
       setEmail("");
       alert("Thank you! You have successfully subscribed to our wisdom newsletter.");
-    } catch (error: any) {
-      if (error.code === 'permission-denied') {
+    } catch (error: unknown) {
+      const fbError = error as { code?: string };
+      if (fbError.code === 'permission-denied') {
         // They tried to update an existing subscription, meaning they are already on the list!
         setEmail("");
         alert("You are already subscribed to our newsletter! Thank you for your continued interest.");

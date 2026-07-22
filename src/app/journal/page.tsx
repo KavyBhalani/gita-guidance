@@ -9,12 +9,13 @@ import { Loader2, Trash2, Share2, BookOpen, ArrowLeft, Star, WifiOff } from "luc
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Chat } from "@/types/chat";
 
 export default function JournalPage() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [chats, setChats] = useState<any[]>([]);
+
+  const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
   const [isOffline, setIsOffline] = useState(false);
@@ -56,11 +57,11 @@ export default function JournalPage() {
         const fetchedChats = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }));
+        })) as Chat[];
         setChats(fetchedChats);
         setIsOffline(false);
         
-        const cacheable = fetchedChats.map((c: any) => ({
+        const cacheable = fetchedChats.map((c: Chat) => ({
           ...c,
           cachedDate: c.timestamp?.toDate ? c.timestamp.toDate().toISOString() : null,
           timestamp: null // strip non-serializable object
@@ -93,7 +94,7 @@ export default function JournalPage() {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        const updatedCache = parsed.map((c: any) => c.id === id ? { ...c, isFavorite: !currentStatus } : c);
+        const updatedCache = parsed.map((c: Chat) => c.id === id ? { ...c, isFavorite: !currentStatus } : c);
         localStorage.setItem(cacheKey, JSON.stringify(updatedCache));
       }
     } catch (error) {
@@ -114,8 +115,7 @@ export default function JournalPage() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleShare = async (chat: any) => {
+  const handleShare = async (chat: Chat) => {
     const textToShare = `My question: ${chat.question}\n\nDivine Guidance:\n${chat.answer}\n\n- via Gita Guidance`;
     try {
       await navigator.clipboard.writeText(textToShare);
@@ -197,7 +197,7 @@ export default function JournalPage() {
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
 
                 <div className="absolute top-6 right-6">
-                  <button onClick={(e) => handleToggleFavorite(chat.id, chat.isFavorite, e)} className="text-foreground/40 hover:text-primary transition-colors">
+                  <button onClick={(e) => handleToggleFavorite(chat.id, chat.isFavorite || false, e)} className="text-foreground/40 hover:text-primary transition-colors">
                     <Star className={`w-6 h-6 ${chat.isFavorite ? 'fill-primary text-primary' : ''}`} />
                   </button>
                 </div>

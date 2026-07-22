@@ -20,8 +20,8 @@ export default function CookieConsent() {
   const acceptCookies = () => {
     localStorage.setItem("cookie_consent", "accepted");
     // Implementation for Google Consent Mode v2 would go here
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("consent", "update", {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("consent", "update", {
         ad_storage: "granted",
         analytics_storage: "granted",
         ad_user_data: "granted",
@@ -33,8 +33,8 @@ export default function CookieConsent() {
 
   const declineCookies = () => {
     localStorage.setItem("cookie_consent", "declined");
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("consent", "update", {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("consent", "update", {
         ad_storage: "denied",
         analytics_storage: "denied",
         ad_user_data: "denied",

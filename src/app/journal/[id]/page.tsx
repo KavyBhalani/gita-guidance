@@ -9,13 +9,13 @@ import { Loader2, ArrowLeft, Share2, Star, Volume2, Save, Pause, Play, Square } 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { Chat } from "@/types/chat";
 
 export default function SingleChatPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { user, loading: authLoading } = useAuth();
   const { t, languageInfo } = useLanguage();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [chat, setChat] = useState<any>(null);
+  const [chat, setChat] = useState<Chat | null>(null);
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -50,7 +50,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          const found = parsed.find((c: any) => c.id === resolvedParams.id);
+          const found = parsed.find((c: Chat) => c.id === resolvedParams.id);
           if (found) {
             setChat(found);
             setNote(found.note || "");
@@ -64,7 +64,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const data = { id: docSnap.id, ...docSnap.data() } as any;
+          const data = { id: docSnap.id, ...docSnap.data() } as Chat;
           setChat(data);
           setNote(data.note || "");
         } else if (!chat) {
@@ -84,7 +84,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
     if (!user || !chat) return;
     try {
       const newStatus = !chat.isFavorite;
-      setChat((prev: any) => ({ ...prev, isFavorite: newStatus }));
+      setChat((prev: Chat | null) => prev ? { ...prev, isFavorite: newStatus } : null);
       await updateDoc(doc(db, "users", user.uid, "chats", chat.id), {
         isFavorite: newStatus
       });
@@ -94,7 +94,7 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        const updatedCache = parsed.map((c: any) => c.id === chat.id ? { ...c, isFavorite: newStatus } : c);
+        const updatedCache = parsed.map((c: Chat) => c.id === chat.id ? { ...c, isFavorite: newStatus } : c);
         localStorage.setItem(cacheKey, JSON.stringify(updatedCache));
       }
     } catch (error) {
@@ -109,14 +109,14 @@ export default function SingleChatPage({ params }: { params: Promise<{ id: strin
       await updateDoc(doc(db, "users", user.uid, "chats", chat.id), {
         note: note
       });
-      setChat((prev: any) => ({ ...prev, note }));
+      setChat((prev: Chat | null) => prev ? { ...prev, note } : null);
       
       // Update cache
       const cacheKey = `chat_cache_${user.uid}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         const parsed = JSON.parse(cached);
-        const updatedCache = parsed.map((c: any) => c.id === chat.id ? { ...c, note } : c);
+        const updatedCache = parsed.map((c: Chat) => c.id === chat.id ? { ...c, note } : c);
         localStorage.setItem(cacheKey, JSON.stringify(updatedCache));
       }
       
