@@ -4,7 +4,7 @@ import { getPostBySlug, getAllPosts } from "@/lib/blog";
 import { marked } from "marked";
 import Link from "next/link";
 import { ArrowLeft, Clock, User } from "lucide-react";
-import { BlogActions } from "@/components/BlogActions";
+import { BlogClientContent } from "@/components/BlogClientContent";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -52,8 +52,11 @@ export default async function BlogPostPage({
 
   const htmlContent = marked.parse(post.content);
   
+  // Clean text for TTS
+  const cleanText = post.content.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`\[\]]/g, '');
+  
   // Calculate read time
-  const wordCount = post.content.split(/\s+/g).length;
+  const wordCount = cleanText.split(/\s+/g).length;
   const readTime = Math.ceil(wordCount / 200); // Average reading speed
 
   return (
@@ -63,7 +66,6 @@ export default async function BlogPostPage({
           <ArrowLeft className="w-4 h-4" />
           Back to Blog
         </Link>
-        <BlogActions slug={post.slug} rawText={post.content} />
       </div>
 
       <article className="glass rounded-3xl p-8 md:p-12 border border-white/5">
@@ -95,9 +97,10 @@ export default async function BlogPostPage({
           </div>
         </header>
 
-        <div 
-          className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary-hover prose-strong:text-foreground prose-p:text-foreground/80 leading-loose"
-          dangerouslySetInnerHTML={{ __html: htmlContent as string }}
+        <BlogClientContent 
+          slug={post.slug} 
+          htmlContent={htmlContent as string} 
+          cleanText={cleanText} 
         />
         
       </article>

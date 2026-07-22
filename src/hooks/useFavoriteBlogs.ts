@@ -77,14 +77,12 @@ export function useFavoriteBlogs() {
           });
         }
       } catch (error) {
-        console.error("Failed to toggle favorite in Firebase:", error);
-        // Revert optimistic update on failure
-        setFavoriteSlugs(favoriteSlugs);
+        console.error("Failed to toggle favorite in Firebase, falling back to local:", error);
       }
-    } else {
-      // Local storage update
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSlugs));
     }
+    
+    // Always update Local Storage as a fallback/sync mechanism
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newSlugs));
   };
 
   const isFavorite = (slug: string) => favoriteSlugs.includes(slug);

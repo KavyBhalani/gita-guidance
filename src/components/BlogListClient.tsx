@@ -92,7 +92,8 @@ export function BlogListClient({ initialPosts }: BlogListClientProps) {
             <article key={post.slug} className="glass rounded-3xl p-6 border border-white/5 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full relative">
               <button
                 onClick={(e) => {
-                  e.preventDefault(); // Prevent navigating when clicking star
+                  e.preventDefault(); 
+                  e.stopPropagation();
                   toggleFavorite(post.slug);
                 }}
                 className="absolute top-4 right-4 p-2 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur-sm border border-white/10 transition-colors z-10"
