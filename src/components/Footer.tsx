@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Sparkles, Shield, Globe, MessageCircle, User, Heart, Mail } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
+import { FeedbackWidget } from "./FeedbackWidget";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -50,20 +51,7 @@ export default function Footer() {
               </div>
             </form>
 
-            <div className="flex gap-4">
-              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
-                <MessageCircle className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
-                <User className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
-                <Heart className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
-                <Globe className="w-5 h-5" />
-              </a>
-            </div>
+            <FeedbackWidget />
           </div>
           
           <div>
