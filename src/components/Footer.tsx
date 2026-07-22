@@ -90,7 +90,7 @@ export default function Footer() {
             <h4 className="text-foreground font-semibold mb-6">Trust & Legal</h4>
             <ul className="space-y-4">
               <li><Link href="/trust/editorial-policy" className="text-foreground/60 hover:text-primary transition-colors">Editorial Policy</Link></li>
-              <li><Link href="/trust/how-ai-works" className="text-foreground/60 hover:text-primary transition-colors">How Our AI Works</Link></li>
+              <li><Link href="/trust/about-ai" className="text-foreground/60 hover:text-primary transition-colors">How Our AI Works</Link></li>
               <li><Link href="/privacy" className="text-foreground/60 hover:text-primary transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-foreground/60 hover:text-primary transition-colors">Terms of Service</Link></li>
             </ul>
