@@ -1,23 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Volume2, Pause, Play, Star, Square } from "lucide-react";
 import { useFavoriteBlogs } from "@/hooks/useFavoriteBlogs";
 
-interface Block {
-  html: string;
-  text: string;
-}
-
 interface BlogClientContentProps {
   slug: string;
-  blocks: Block[];
+  htmlContent: string;
 }
 
-export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
+export function BlogClientContent({ slug, htmlContent }: BlogClientContentProps) {
   const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
   const [chunkIndex, setChunkIndex] = useState<number>(-1);
   const { isFavorite, toggleFavorite } = useFavoriteBlogs();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [blocks, setBlocks] = useState<HTMLElement[]>([]);
+
+  // Extract top-level elements for chunking
+  useEffect(() => {
+    if (containerRef.current) {
+      const elements = Array.from(containerRef.current.children) as HTMLElement[];
+      setBlocks(elements);
+    }
+  }, [htmlContent, speechState]); // Re-run when entering speech mode
 
   useEffect(() => {
     return () => {
@@ -34,8 +39,10 @@ export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
       return;
     }
     
+    const text = blocks[index].innerText;
+    
     // Skip empty chunks
-    if (!blocks[index].text.trim()) {
+    if (!text || !text.trim()) {
       playChunk(index + 1);
       return;
     }
@@ -43,7 +50,7 @@ export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
     setChunkIndex(index);
     window.speechSynthesis.cancel();
     
-    const utterance = new SpeechSynthesisUtterance(blocks[index].text);
+    const utterance = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
     const preferredVoice = voices.find(v => v.lang.includes("en-US") && v.name.includes("Google"));
     if (preferredVoice) utterance.voice = preferredVoice;
@@ -77,7 +84,10 @@ export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
     }
 
     setSpeechState("playing");
-    playChunk(0);
+    setTimeout(() => {
+      // Need a slight delay to ensure DOM is ready if we unmounted anything
+      playChunk(0);
+    }, 50);
   };
 
   const handleStopListen = () => {
@@ -93,6 +103,32 @@ export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
     e.stopPropagation();
     await toggleFavorite(slug);
   };
+
+  // Dynamically apply styles to children based on speech state
+  useEffect(() => {
+    if (blocks.length === 0) return;
+    
+    blocks.forEach((el, i) => {
+      el.style.transition = "all 0.3s ease-in-out";
+      
+      if (speechState !== "idle") {
+        if (i === chunkIndex) {
+          el.style.opacity = "1";
+          el.style.transform = "scale(1.02)";
+          el.style.transformOrigin = "left center";
+          el.style.filter = "drop-shadow(0 0 15px rgba(245,158,11,0.2))";
+        } else {
+          el.style.opacity = "0.3";
+          el.style.transform = "scale(1)";
+          el.style.filter = "blur(1px)";
+        }
+      } else {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+        el.style.filter = "none";
+      }
+    });
+  }, [chunkIndex, speechState, blocks]);
 
   return (
     <>
@@ -124,21 +160,11 @@ export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
         </button>
       </div>
 
-      <div className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary-hover prose-strong:text-foreground prose-p:text-foreground/80 leading-loose">
-        {blocks.map((block, i) => (
-          <div 
-            key={i}
-            className={`transition-all duration-300 ${
-              speechState !== "idle" 
-                ? i === chunkIndex 
-                  ? "opacity-100 scale-[1.02] transform origin-left drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]" 
-                  : "opacity-30 blur-[1px]" 
-                : "opacity-100"
-            }`}
-            dangerouslySetInnerHTML={{ __html: block.html }}
-          />
-        ))}
-      </div>
+      <div 
+        ref={containerRef}
+        className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary-hover prose-strong:text-foreground prose-p:text-foreground/80 leading-loose"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
     </>
   );
 }
