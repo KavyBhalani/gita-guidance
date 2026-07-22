@@ -11,11 +11,32 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState("");
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate subscription
-    setEmail("");
-    alert("Thank you for subscribing to our wisdom newsletter!");
+    if (!email || isSubscribing) return;
+    
+    setIsSubscribing(true);
+    try {
+      // Lazy import to keep footer light until needed
+      const { db } = await import("@/lib/firebase");
+      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+      
+      await addDoc(collection(db, "newsletter_subscribers"), {
+        email,
+        subscribedAt: serverTimestamp(),
+        source: "footer_widget"
+      });
+      
+      setEmail("");
+      alert("Thank you! You have successfully subscribed to our wisdom newsletter.");
+    } catch (error) {
+      console.error("Subscription error:", error);
+      alert("Oops! Something went wrong. Please try again later.");
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   return (
@@ -45,8 +66,12 @@ export default function Footer() {
                   required
                   className="flex-1 px-4 py-2 rounded-full bg-background border border-border text-foreground focus:outline-none focus:border-primary/50"
                 />
-                <button type="submit" className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors">
-                  Subscribe
+                <button 
+                  type="submit" 
+                  disabled={isSubscribing}
+                  className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors disabled:opacity-70"
+                >
+                  {isSubscribing ? "Subscribing..." : "Subscribe"}
                 </button>
               </div>
             </form>
