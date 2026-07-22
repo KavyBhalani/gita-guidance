@@ -51,16 +51,16 @@ export default function Footer() {
             </form>
 
             <div className="flex gap-4">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
+              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
                 <MessageCircle className="w-5 h-5" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
+              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
                 <User className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
+              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
                 <Heart className="w-5 h-5" />
               </a>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
+              <a href="#" className="p-2 glass rounded-full text-foreground/70 hover:text-primary transition-colors">
                 <Globe className="w-5 h-5" />
               </a>
             </div>

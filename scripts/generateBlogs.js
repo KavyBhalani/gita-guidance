@@ -19,13 +19,44 @@ const blogTopics = [
   "Balancing Work and Spiritual Life",
   "The Power of Meditation (Dhyana) in the Gita",
   "Understanding the Three Gunas: Sattva, Rajas, and Tamas",
-  // We can add 35 more here
+  
+  // New Topics for Batch 2 and onwards
+  "Bhagavad Gita Chapter 3: Karma Yoga Explained",
+  "The Concept of Reincarnation in the Bhagavad Gita",
+  "How the Bhagavad Gita Defines True Happiness",
+  "Detachment vs Indifference: What the Gita Teaches",
+  "The Role of Faith (Shraddha) in Spiritual Growth",
+  "Bhagavad Gita Chapter 4: Jnana Karma Sanyasa Yoga",
+  "How to Overcome Fear Using Bhagavad Gita Wisdom",
+  "The Meaning of Moksha (Liberation) in Hinduism",
+  "Self-Control and Discipline: Lessons from Arjuna",
+  "Bhagavad Gita Chapter 5: Karma Sanyasa Yoga",
+  "The Nature of the Soul (Atman) in the Gita",
+  "How to Make Difficult Decisions: The Gita Approach",
+  "Bhagavad Gita Chapter 6: Dhyana Yoga (The Yoga of Meditation)",
+  "Understanding Maya (Illusion) in the Bhagavad Gita",
+  "The Concept of Yajna (Sacrifice) in Modern Life",
+  "Bhagavad Gita Chapter 7: Jnana Vijnana Yoga",
+  "Finding Inner Peace in a Chaotic World",
+  "The Importance of Duty in the Bhagavad Gita",
+  "Bhagavad Gita Chapter 8: Akshara Brahma Yoga",
+  "How to Let Go of Ego According to Krishna",
+  "The Concept of Bhakti Yoga (Devotion)",
+  "Bhagavad Gita Chapter 9: Raja Vidya Raja Guhya Yoga",
+  "Overcoming Jealousy and Envy: Gita Insights",
+  "The Divine and Demoniac Natures in the Gita",
+  "Bhagavad Gita Chapter 10: Vibhuti Yoga",
+  "How to Deal with Toxic People: Ancient Wisdom",
+  "The Concept of Time (Kala) in the Bhagavad Gita",
+  "Bhagavad Gita Chapter 11: Vishvarupa Darshana Yoga",
+  "The Universal Form of Krishna: A Deep Dive",
+  "Bhagavad Gita Chapter 12: Bhakti Yoga Explained",
+  "How to Cultivate Patience and Tolerance",
+  "The Difference Between Mind and Intellect in the Gita",
+  "Bhagavad Gita Chapter 13: Kshetra Kshetrajna Vibhaga Yoga",
+  "Overcoming Laziness (Tamas) using the Gita",
+  "The Ultimate Goal of Life According to the Bhagavad Gita"
 ];
-
-// Generate exactly 50 topics
-for (let i = 16; i <= 50; i++) {
-  blogTopics.push(`Spiritual Wisdom from the Bhagavad Gita - Lesson ${i}`);
-}
 
 async function generateArticle(topic) {
   const prompt = `Write a 1000-word SEO-optimized blog post about "${topic}" based on the Bhagavad Gita. Use professional, empathetic, and spiritual tone. Structure the post with a catchy Title, an Introduction, several <h2> and <h3> subheadings, practical applications, and a Conclusion. Return ONLY the raw markdown text for the blog post. Do not include any JSON wrappers or markdown code block ticks (\`\`\`) around the whole output.`;
@@ -54,9 +85,17 @@ async function run() {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  for (let i = 3; i < blogTopics.length; i++) {
+  for (let i = 0; i < blogTopics.length; i++) {
     const topic = blogTopics[i];
-    console.log(`Generating: ${topic}`);
+    const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const filePath = path.join(dir, `${slug}.md`);
+
+    if (fs.existsSync(filePath)) {
+      console.log(`⏭️ Skipping (already exists): ${slug}.md`);
+      continue;
+    }
+
+    console.log(`Generating [${i+1}/${blogTopics.length}]: ${topic}`);
     const content = await generateArticle(topic);
     
     // Validate that the AI returned a real article (at least 1000 characters)
@@ -64,9 +103,6 @@ async function run() {
       console.error(`❌ Failed to generate full article for: ${topic}. (Reason: AI Credit Limit / Timeout)`);
       continue; // Skip saving this file
     }
-    
-    // Create a slug
-    const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     
     const frontmatter = `---
 title: "${topic.replace(/"/g, '\\"')}"
@@ -78,7 +114,7 @@ tags: ["Bhagavad Gita", "Spirituality", "Self-Improvement"]
 
 `;
 
-    fs.writeFileSync(path.join(dir, `${slug}.md`), frontmatter + content);
+    fs.writeFileSync(filePath, frontmatter + content);
     console.log(`✅ Saved: ${slug}.md`);
     
     // Wait a bit to not overwhelm the API
