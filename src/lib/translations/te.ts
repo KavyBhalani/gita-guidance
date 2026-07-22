@@ -6,6 +6,7 @@ export const te: TranslationDictionary = {
     home: "ముఖపుట",
     guidance: "మార్గదర్శనం",
     about: "మా గురించి",
+    blog: "బ్లాగ్",
     signIn: "సైన్ ఇన్ చేయండి",
     signOut: "సైన్ అవుట్ చేయండి",
     seeker: "జిజ్ఞాసువు",

@@ -6,6 +6,7 @@ export const en: TranslationDictionary = {
     home: "Home",
     guidance: "Guidance",
     about: "About",
+    blog: "Blog",
     signIn: "Sign In",
     signOut: "Sign Out",
     seeker: "Seeker",

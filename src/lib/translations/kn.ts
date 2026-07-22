@@ -6,6 +6,7 @@ export const kn: TranslationDictionary = {
     home: "ಮುಖಪುಟ",
     guidance: "ಮಾರ್ಗದರ್ಶನ",
     about: "ನಮ್ಮ ಬಗ್ಗೆ",
+    blog: "ಬ್ಲಾಗ್",
     signIn: "ಸೈನ್ ಇನ್ ಮಾಡಿ",
     signOut: "ಸೈನ್ ಔಟ್ ಮಾಡಿ",
     seeker: "ಜಿಜ್ಞಾಸು",

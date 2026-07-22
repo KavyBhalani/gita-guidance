@@ -6,6 +6,7 @@ export const hi: TranslationDictionary = {
     home: "मुख्य पृष्ठ",
     guidance: "मार्गदर्शन",
     about: "हमारे बारे में",
+    blog: "ब्लॉग",
     signIn: "साइन इन करें",
     signOut: "साइन आउट करें",
     seeker: "जिज्ञासु",

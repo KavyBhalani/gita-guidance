@@ -61,7 +61,7 @@ export default function Navbar() {
                 href="/blog" 
                 className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/blog') ? 'text-primary' : 'text-foreground/80'}`}
               >
-                Blog
+                {t.navbar.blog}
               </Link>
             </div>
 
@@ -166,7 +166,7 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block px-4 py-3 rounded-xl text-lg font-medium transition-colors ${isActive('/blog') ? 'text-primary bg-white/10 border border-white/5' : 'text-foreground/80 hover:text-foreground hover:bg-white/5'}`}
                 >
-                  Blog
+                  {t.navbar.blog}
                 </Link>
                 
                 <div className="mt-auto pt-6 border-t border-white/10">

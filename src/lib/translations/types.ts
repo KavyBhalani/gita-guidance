@@ -23,6 +23,7 @@ export interface TranslationDictionary {
     home: string;
     guidance: string;
     about: string;
+    blog: string;
     signIn: string;
     signOut: string;
     seeker: string;

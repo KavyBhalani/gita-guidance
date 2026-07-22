@@ -32,7 +32,7 @@ export default function BlogIndexPage() {
                 {post.title}
               </h2>
               <p className="text-foreground/70 line-clamp-3 mb-6">
-                {post.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
+                {post.content.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`>\[\]]/g, '').trim().substring(0, 150)}...
               </p>
             </Link>
             <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">

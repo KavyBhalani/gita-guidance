@@ -6,6 +6,7 @@ export const ne: TranslationDictionary = {
     home: "गृहपृष्ठ",
     guidance: "मार्गदर्शन",
     about: "हाम्रो बारेमा",
+    blog: "ब्लग",
     signIn: "साइन इन गर्नुहोस्",
     signOut: "साइन आउट गर्नुहोस्",
     seeker: "जिज्ञासु",

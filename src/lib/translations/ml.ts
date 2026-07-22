@@ -6,6 +6,7 @@ export const ml: TranslationDictionary = {
     home: "ഹോം",
     guidance: "വഴികാട്ടൽ",
     about: "ഞങ്ങളെക്കുറിച്ച്",
+    blog: "ബ്ലോഗ്",
     signIn: "സൈൻ ഇൻ",
     signOut: "സൈൻ ഔട്ട്",
     seeker: "അന്വേഷി",

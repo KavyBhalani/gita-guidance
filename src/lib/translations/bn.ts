@@ -6,6 +6,7 @@ export const bn: TranslationDictionary = {
     home: "মূল পাতা",
     guidance: "নির্দেশনা",
     about: "আমাদের সম্পর্কে",
+    blog: "ব্লগ",
     signIn: "সাইন ইন করুন",
     signOut: "সাইন আউট করুন",
     seeker: "জিজ্ঞাসু",

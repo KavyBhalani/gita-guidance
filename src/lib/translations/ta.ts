@@ -6,6 +6,7 @@ export const ta: TranslationDictionary = {
     home: "முகப்பு",
     guidance: "வழிகாட்டுதல்",
     about: "எங்களை பற்றி",
+    blog: "வலைப்பதிவு",
     signIn: "உள்நுழைக",
     signOut: "வெளியேறுக",
     seeker: "தேடுவோர்",

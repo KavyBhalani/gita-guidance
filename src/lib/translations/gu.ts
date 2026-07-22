@@ -6,6 +6,7 @@ export const gu: TranslationDictionary = {
     home: "મુખ્ય પૃષ્ઠ",
     guidance: "માર્ગદર્શન",
     about: "અમારા વિશે",
+    blog: "બ્લોગ",
     signIn: "સાઇન ઇન કરો",
     signOut: "સાઇન આઉટ કરો",
     seeker: "જીજ્ઞાસુ",

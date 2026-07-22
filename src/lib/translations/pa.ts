@@ -6,6 +6,7 @@ export const pa: TranslationDictionary = {
     home: "ਮੁੱਖ ਪੰਨਾ",
     guidance: "ਮਾਰਗਦਰਸ਼ਨ",
     about: "ਸਾਡੇ ਬਾਰੇ",
+    blog: "ਬਲੌਗ",
     signIn: "ਸਾਈਨ ਇਨ ਕਰੋ",
     signOut: "ਸਾਈਨ ਆਊਟ ਕਰੋ",
     seeker: "ਜਿਗਿਆਸੂ",
