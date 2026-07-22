@@ -4,20 +4,20 @@ import { useState, useEffect } from "react";
 import { Volume2, Pause, Play, Star, Square } from "lucide-react";
 import { useFavoriteBlogs } from "@/hooks/useFavoriteBlogs";
 
-interface BlogClientContentProps {
-  slug: string;
-  htmlContent: string;
-  cleanText: string;
+interface Block {
+  html: string;
+  text: string;
 }
 
-export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientContentProps) {
+interface BlogClientContentProps {
+  slug: string;
+  blocks: Block[];
+}
+
+export function BlogClientContent({ slug, blocks }: BlogClientContentProps) {
   const [speechState, setSpeechState] = useState<"idle" | "playing" | "paused">("idle");
-  const [charIndex, setCharIndex] = useState<number>(-1);
   const [chunkIndex, setChunkIndex] = useState<number>(-1);
   const { isFavorite, toggleFavorite } = useFavoriteBlogs();
-
-  // Split cleanText into paragraphs for reliable TTS playback
-  const chunks = cleanText.split(/\n+/).filter(c => c.trim().length > 0);
 
   useEffect(() => {
     return () => {
@@ -28,30 +28,27 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
   }, []);
 
   const playChunk = (index: number) => {
-    if (index >= chunks.length) {
+    if (index >= blocks.length) {
       setSpeechState("idle");
       setChunkIndex(-1);
-      setCharIndex(-1);
       return;
     }
     
+    // Skip empty chunks
+    if (!blocks[index].text.trim()) {
+      playChunk(index + 1);
+      return;
+    }
+
     setChunkIndex(index);
-    setCharIndex(0);
     window.speechSynthesis.cancel();
     
-    const utterance = new SpeechSynthesisUtterance(chunks[index]);
+    const utterance = new SpeechSynthesisUtterance(blocks[index].text);
     const voices = window.speechSynthesis.getVoices();
     const preferredVoice = voices.find(v => v.lang.includes("en-US") && v.name.includes("Google"));
     if (preferredVoice) utterance.voice = preferredVoice;
 
-    utterance.onboundary = (e) => {
-      if (e.name === "word") {
-        setCharIndex(e.charIndex);
-      }
-    };
-
     utterance.onend = () => {
-      // Play next chunk
       playChunk(index + 1);
     };
 
@@ -59,7 +56,6 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
       console.error("Speech synthesis error", e);
       setSpeechState("idle");
       setChunkIndex(-1);
-      setCharIndex(-1);
     };
 
     window.speechSynthesis.speak(utterance);
@@ -80,7 +76,6 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
       return;
     }
 
-    // Start speaking from first chunk
     setSpeechState("playing");
     playChunk(0);
   };
@@ -91,32 +86,12 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
     }
     setSpeechState("idle");
     setChunkIndex(-1);
-    setCharIndex(-1);
   };
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     await toggleFavorite(slug);
-  };
-
-  const renderHighlightedText = (text: string, currentIndex: number) => {
-    if (currentIndex < 0) return text;
-    
-    const match = text.slice(currentIndex).match(/[\s\n]/);
-    const endIndex = match ? currentIndex + match.index! : text.length;
-    
-    const before = text.slice(0, currentIndex);
-    const word = text.slice(currentIndex, endIndex);
-    const after = text.slice(endIndex);
-    
-    return (
-      <>
-        {before}
-        <span className="bg-primary/40 text-primary font-bold rounded px-1 -mx-1 transition-colors duration-150 shadow-[0_0_10px_rgba(245,158,11,0.3)]">{word}</span>
-        {after}
-      </>
-    );
   };
 
   return (
@@ -149,22 +124,21 @@ export function BlogClientContent({ slug, htmlContent, cleanText }: BlogClientCo
         </button>
       </div>
 
-      {speechState !== "idle" ? (
-        <div className="bg-black/20 p-6 md:p-8 rounded-2xl border border-white/5 mb-8 relative">
-           <div className="text-foreground/90 leading-loose font-serif text-xl space-y-6">
-             {chunks.map((chunk, i) => (
-               <p key={i} className={i === chunkIndex ? "text-foreground font-medium" : "text-foreground/40"}>
-                 {i === chunkIndex ? renderHighlightedText(chunk, charIndex) : chunk}
-               </p>
-             ))}
-           </div>
-        </div>
-      ) : (
-        <div 
-          className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary-hover prose-strong:text-foreground prose-p:text-foreground/80 leading-loose"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
-        />
-      )}
+      <div className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:text-primary prose-a:text-primary hover:prose-a:text-primary-hover prose-strong:text-foreground prose-p:text-foreground/80 leading-loose">
+        {blocks.map((block, i) => (
+          <div 
+            key={i}
+            className={`transition-all duration-300 ${
+              speechState !== "idle" 
+                ? i === chunkIndex 
+                  ? "opacity-100 scale-[1.02] transform origin-left drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]" 
+                  : "opacity-30 blur-[1px]" 
+                : "opacity-100"
+            }`}
+            dangerouslySetInnerHTML={{ __html: block.html }}
+          />
+        ))}
+      </div>
     </>
   );
 }

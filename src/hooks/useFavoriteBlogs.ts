@@ -8,7 +8,15 @@ import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firesto
 const STORAGE_KEY = "gita_guidance_favorite_blogs";
 
 export function useFavoriteBlogs() {
-  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>([]);
+  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+    }
+    return [];
+  });
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
