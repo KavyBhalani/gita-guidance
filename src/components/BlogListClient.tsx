@@ -21,7 +21,19 @@ interface BlogListClientProps {
 export function BlogListClient({ initialPosts }: BlogListClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [displayCount, setDisplayCount] = useState(9);
   const { isFavorite, toggleFavorite, isLoading } = useFavoriteBlogs();
+
+  // Reset display count when tab or search changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setDisplayCount(9);
+  };
+
+  const handleTabChange = (tab: "all" | "favorites") => {
+    setActiveTab(tab);
+    setDisplayCount(9);
+  };
 
   // Filter posts based on tab and search
   const filteredPosts = initialPosts.filter(post => {
@@ -55,20 +67,20 @@ export function BlogListClient({ initialPosts }: BlogListClientProps) {
             type="text"
             placeholder="Search by title, tag, or keyword..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
           />
         </div>
 
         <div className="flex items-center gap-2 bg-white/5 p-1 rounded-full border border-white/10">
           <button
-            onClick={() => setActiveTab("all")}
+            onClick={() => handleTabChange("all")}
             className={`px-6 py-2 rounded-full font-medium transition-all ${activeTab === 'all' ? 'bg-primary text-background shadow-lg' : 'text-foreground/70 hover:text-foreground'}`}
           >
             All Articles
           </button>
           <button
-            onClick={() => setActiveTab("favorites")}
+            onClick={() => handleTabChange("favorites")}
             className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-all ${activeTab === 'favorites' ? 'bg-primary text-background shadow-lg' : 'text-foreground/70 hover:text-foreground'}`}
           >
             <Star className={`w-4 h-4 ${activeTab === 'favorites' ? 'fill-background' : ''}`} />
@@ -87,42 +99,53 @@ export function BlogListClient({ initialPosts }: BlogListClientProps) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post) => (
-            <article key={post.slug} className="glass rounded-3xl p-6 border border-white/5 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full relative">
-              <button
-                onClick={(e) => {
-                  e.preventDefault(); 
-                  e.stopPropagation();
-                  toggleFavorite(post.slug);
-                }}
-                className="absolute top-4 right-4 p-2 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur-sm border border-white/10 transition-colors z-10"
-                title={isFavorite(post.slug) ? "Remove Bookmark" : "Bookmark Article"}
-              >
-                <Star className={`w-4 h-4 transition-colors ${isFavorite(post.slug) ? 'fill-primary text-primary' : 'text-foreground/40 hover:text-primary'}`} />
-              </button>
+        <div className="flex flex-col items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+            {filteredPosts.slice(0, displayCount).map((post) => (
+              <article key={post.slug} className="glass rounded-3xl p-6 border border-white/5 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full relative">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    toggleFavorite(post.slug);
+                  }}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur-sm border border-white/10 transition-colors z-10"
+                  title={isFavorite(post.slug) ? "Remove Bookmark" : "Bookmark Article"}
+                >
+                  <Star className={`w-4 h-4 transition-colors ${isFavorite(post.slug) ? 'fill-primary text-primary' : 'text-foreground/40 hover:text-primary'}`} />
+                </button>
 
-              <div className="mb-4 pr-10">
-                <span className="text-primary text-xs font-semibold uppercase tracking-wider">
-                  {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </span>
-              </div>
-              <Link href={`/blog/${post.slug}`} className="flex-1">
-                <h2 className="font-serif text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h2>
-                <p className="text-foreground/70 line-clamp-3 mb-6">
-                  {post.content.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`>\[\]]/g, '').trim().substring(0, 150)}...
-                </p>
-              </Link>
-              <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
-                <span className="text-sm text-foreground/50">{post.author}</span>
-                <Link href={`/blog/${post.slug}`} className="text-primary font-medium text-sm hover:underline">
-                  Read Article →
+                <div className="mb-4 pr-10">
+                  <span className="text-primary text-xs font-semibold uppercase tracking-wider">
+                    {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+                <Link href={`/blog/${post.slug}`} className="flex-1">
+                  <h2 className="font-serif text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h2>
+                  <p className="text-foreground/70 line-clamp-3 mb-6">
+                    {post.content.replace(/<[^>]*>?/gm, '').replace(/[#*_\-~`>\[\]]/g, '').trim().substring(0, 150)}...
+                  </p>
                 </Link>
-              </div>
-            </article>
-          ))}
+                <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-sm text-foreground/50">{post.author}</span>
+                  <Link href={`/blog/${post.slug}`} className="text-primary font-medium text-sm hover:underline">
+                    Read Article →
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+          
+          {filteredPosts.length > displayCount && (
+            <button
+              onClick={() => setDisplayCount(prev => prev + 9)}
+              className="mt-12 px-8 py-3 rounded-full border border-primary/30 text-primary font-medium hover:bg-primary/10 transition-colors animate-in fade-in"
+            >
+              Load More Articles
+            </button>
+          )}
         </div>
       )}
     </div>
